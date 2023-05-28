@@ -24,20 +24,20 @@ Examples:
 * If you are planning to use image generation AI (eg DALL-E or Stable Diffusion) make sure to adjust attachment settings to support large images and verify that `webp` image extension configured.  
 
   Go to `ACP` > `General` > `Attachment settings` and adjust `Total attachment quota`, `Maximum file size` and `Maximum file size messaging`:
-  ![Attachment settings](./docs/attachment_settings.png)  
+  ![Attachment settings](../privet/ailabs/docs/attachment_settings.png)  
 
   Go to `ACP` > `Posting` > `Manage attachment extensions`, look for `webp`, add it if missing:  
-  ![Attachment settings](./docs/attachment_webp.png)  
+  ![Attachment settings](../privet/ailabs/docs/attachment_webp.png)  
 
 ## Installation
 
 Download https://github.com/privet-fun/phpbb_ailabs and copy `/privet/ailabs` to `phppp/ext` folder:  
-![Attachment settings](./docs/ext_location.png) 
+![Attachment settings](../privet/ailabs/docs/ext_location.png) 
 
 Go to `ACP` > `Customise` > `Manage extensions` and enable the `AI Labs` extension.
 
 Finally go to `ACP` > `Extensions` > `AI Labs` > `Settings` and add desired AI configurations:
-![Attachment settings](./docs/ailabs_settings.png) 
+![Attachment settings](../privet/ailabs/docs/ailabs_settings.png) 
 
 ## ChatGPT basic setup 
 
@@ -49,14 +49,14 @@ Finally go to `ACP` > `Extensions` > `AI Labs` > `Settings` and add desired AI c
   Make sure this user account is activated and fully functional.  
 
 * Got to `ACP` > `Extensions` > `AI Labs` > `Settings` and add new configuration, select `chatgpt` from AI dropdown:
-  ![Attachment settings](./docs/chatgpt_setup.png)  
+  ![Attachment settings](../privet/ailabs/docs/chatgpt_setup.png)  
   
   - Use `Load default configuration/template` to get defaults.  
     Replace Configuration JSON `api-key` with your Open AI key.  
   - Select forums where you want `ChatGPT` AI user to reply to new posts and/or to quoted and [@mention](https://www.phpbb.com/customise/db/extension/simple_mentions) (if you are using Simple mentions extension) posts. 
 
 * Save changes, navigate to forum configured above and create new post (if you configured `Reply on a post`) or quote/[@mention]() `ChatGPT` user:
-  ![Attachment settings](./docs/chatgpt_example.png)
+  ![Attachment settings](../privet/ailabs/docs/chatgpt_example.png)
 
 * Fine-tuning can be done by adjusting following OpenAI API chat parameters https://platform.openai.com/docs/api-reference/chat
   - `model`, default `gpt-3.5-turbo`, full list of models available at https://platform.openai.com/docs/models
@@ -72,14 +72,14 @@ Finally go to `ACP` > `Extensions` > `AI Labs` > `Settings` and add desired AI c
 
 You can setup ChatGPT to pretend it is somebody else.  
 Let's create new board user `Bender` and configure as shown below:  
-![Attachment settings](./docs/chatgpt_bender_example.png)  
+![Attachment settings](../privet/ailabs/docs/chatgpt_bender_example.png)  
 Notice we used `prefix` and `prefix_tokens` to fine-tune ChatGPT AI behaviour.    
 Our AI bot `Bender` will provide responses like [this](https://privet.fun/viewtopic.php?t=2799), mostly staying in a character.  
 
 ## DALL-E setup 
 
 Setup mostly the same as for ChatGPT above:  
-![Attachment settings](./docs/dalle_setup.png)    
+![Attachment settings](../privet/ailabs/docs/dalle_setup.png)    
 
 Refer to https://platform.openai.com/docs/api-reference/images/create to learn more about `n` and `size` parameters.  
 [Examples](https://privet.fun/viewtopic.php?p=355594)
@@ -98,7 +98,7 @@ Refer to https://platform.openai.com/docs/api-reference/images/create to learn m
 *  You will need Stability AI account, follow official instructions https://platform.stability.ai/docs/getting-started/authentication to create account and obtain API key.  
 
 * Create new board user, let's say `Stable Diffusion` and create configuration:
-  ![Attachment settings](./docs/stablediffusion_setup.png)     
+  ![Attachment settings](../privet/ailabs/docs/stablediffusion_setup.png)     
   [Examples](https://privet.fun/viewtopic.php?t=2801)  
 
 * Refer to https://api.stability.ai/docs#tag/v1generation/operation/textToImage to learn more about configuration JSON parameters.  
@@ -109,4 +109,4 @@ This extension is currently being actively developed. For communication, please 
 
 ## License
 
-[GPLv2](license.txt)
+[GPLv2](../privet/ailabs/license.txt)
