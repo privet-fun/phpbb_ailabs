@@ -1,0 +1,21 @@
+privet_chatgpt_page:
+    path: /ailabs/chatgpt
+    defaults: { _controller: privet.ailabs.controller_chatgpt:execute }
+
+privet_dalle_page:
+    path: /ailabs/dalle
+    defaults: { _controller: privet.ailabs.controller_dalle:execute }
+
+privet_stablediffusion_page:
+    path: /ailabs/stablediffusion
+    defaults: { _controller: privet.ailabs.controller_stablediffusion:execute }
+
+privet_scriptexecute_page:
+    path: /ailabs/scriptexecute
+    defaults: { _controller: privet.ailabs.controller_scriptexecute:execute }    
+
+privet_ailabs_view_log_controller_page:
+    path: /ailabs/log/{post_id}
+    defaults: { _controller: privet.ailabs.controller_log:view_log  }    
+    requirements:
+        post_id: \d+

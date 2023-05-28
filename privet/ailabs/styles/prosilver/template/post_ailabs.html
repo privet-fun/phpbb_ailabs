@@ -1,0 +1,19 @@
+{% if postrow.U_AILABS %}
+<div id="ailabs-post-{{ postrow.POST_ID }}" class="ailabs">
+	<span>AI&nbsp;</span>
+	{% if postrow.U_AILABS_VIEW_LOG %}
+	<a href="{{ postrow.U_AILABS_VIEW_LOG }}" onclick="ailabs_view_log(this.href);return false;"><i
+			class="icon tpr-font fa-external-link fa-fw"></i></a>
+	{% endif %}
+	{% for ailabs in postrow.U_AILABS %}
+	<div id="ailabs-job-{{ ailabs.job_id }}">
+		<a href="{{ ailabs.user_url }}">{{ ailabs.ailabs_username }}</a>
+		{% if ailabs.response_url %}
+		<a href="{{ ailabs.response_url }}">{{ ailabs.status }}</a>
+		{% else %}
+		<span>{{ ailabs.status }}</span>
+		{% endif %}
+	</div>
+	{% endfor %}
+</div>
+{% endif %}

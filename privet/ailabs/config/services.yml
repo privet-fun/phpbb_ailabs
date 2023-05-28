@@ -1,0 +1,119 @@
+imports:
+    - { resource: tables.yml }
+    
+services:
+    privet.ailabs.acp_controller:
+        class: privet\ailabs\controller\acp_controller
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '@language'
+            - '@log'
+            - '@notification_manager'
+            - '@pagination'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '%core.root_path%'
+            - '%privet.ailabs.tables.users%'
+
+    privet.ailabs.listener:
+        class: privet\ailabs\event\listener
+        arguments:
+            - '@user'
+            - '@auth'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@language'
+            - '@request'            
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%privet.ailabs.tables.users%'
+            - '%privet.ailabs.tables.jobs%'                  
+        tags:
+            - { name: event.listener }
+
+    privet.ailabs.controller_chatgpt:
+        class: privet\ailabs\controller\chatgpt
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@service_container'
+            - '%core.php_ext%'
+            - '%core.root_path%'
+            - '%privet.ailabs.tables.users%'
+            - '%privet.ailabs.tables.jobs%' 
+
+    privet.ailabs.controller_dalle:
+        class: privet\ailabs\controller\dalle
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@service_container'
+            - '%core.php_ext%'
+            - '%core.root_path%'
+            - '%privet.ailabs.tables.users%'
+            - '%privet.ailabs.tables.jobs%' 
+
+    privet.ailabs.controller_stablediffusion:
+        class: privet\ailabs\controller\stablediffusion
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@service_container'
+            - '%core.php_ext%'
+            - '%core.root_path%'
+            - '%privet.ailabs.tables.users%'
+            - '%privet.ailabs.tables.jobs%' 
+
+    privet.ailabs.controller_scriptexecute:
+        class: privet\ailabs\controller\scriptexecute
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@service_container'
+            - '%core.php_ext%'
+            - '%core.root_path%'
+            - '%privet.ailabs.tables.users%'
+            - '%privet.ailabs.tables.jobs%' 
+
+    privet.ailabs.controller_log:
+        class: privet\ailabs\controller\log
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@service_container'
+            - '%core.php_ext%'
+            - '%core.root_path%'
+            - '%privet.ailabs.tables.users%'
+            - '%privet.ailabs.tables.jobs%'                                   

@@ -1,0 +1,88 @@
+{% INCLUDECSS '@privet_ailabs/ailabs.css' %}
+{% INCLUDE 'simple_header.html' %}
+
+<script>
+	function close_popup() {
+		if (opener != null) {
+			if (opener.close_waitscreen != null) {
+				if (opener.close_waitscreen == 1) {
+					opener.close_waitscreen = 0;
+					self.close();
+					return 0;
+				}
+			}
+		}
+		setTimeout("close_popup()", 1000);
+		return 0;
+	}
+</script>
+
+<!-- IF .ailabs_log -->
+{% for logs in ailabs_log %}
+{% for log in logs['LOGS'] %}
+<div class="ailabs-log">
+	<div style="display: block">
+		<label>#{{ log.job_id }} AI
+			<a href="{{ log.ailabs_user_url }}">{{ log.ailabs_username }}</a>
+			→
+			<a href="{{ log.poster_user_url }}">{{ log.poster_name }}</a>
+			{% if log.response_url %}
+			→
+			<a href="{{ log.response_url }}">post #{{ log.response_post_id }}</a>
+			{% endif %}
+		</label>
+	</div>
+	<div><label>Status</label>{{ log.status }}</div>
+	<div><label>Attempts</label>{{ log.attempts }}</div>
+	<div><label>Mode</label>{{ log.post_mode }}</div>
+	<div><label>Request time</label>
+		<div class="datetime-raw">{{ log.request_time }}</div>
+	</div>
+	<!-- IF log.response_time -->
+	<div><label>Response time</label>
+		<div class="datetime-raw">{{ log.response_time }}</div>
+	</div>
+	<!-- ENDIF -->
+	<!-- IF log.request_tokens -->
+	<div><label>Request tokens</label>{{ log.request_tokens }}</div>
+	<!-- ENDIF -->
+	<!-- IF log.response_tokens -->
+	<div><label>Response tokens</label>{{ log.response_tokens }}</div>
+	<!-- ENDIF -->
+	<div><label>Request</label></div>
+	<textarea readonly class="bg1" rows="3">{{ log.request }}</textarea>
+	<!-- IF log.response -->
+	<div><label>Response</label></div>
+	<textarea readonly class="bg1" rows="5">{{ log.response }}</textarea>
+	<!-- ENDIF -->
+	<div><label>Log</label></div>
+	<textarea readonly class="json-raw bg1" rows="9">{{ log.log }}</textarea>
+	<div class="clear"></div>
+</div>
+{% endfor %}
+{% endfor %}
+<!-- ENDIF -->
+
+<div class="clear"></div>
+
+<div style="text-align: center;"><a href="#" onclick="self.close();return false;">[ {{ lang('CLOSE_WINDOW') }} ]</a>
+</div>
+
+<script>
+	close_popup();
+
+	(function () {
+		var elements = document.getElementsByClassName("json-raw");
+		Array.from(elements).forEach(element => {
+			var obj = JSON.parse(element.innerHTML);
+			element.innerHTML = JSON.stringify(obj, undefined, 2);
+
+		});
+		var elements = document.getElementsByClassName("datetime-raw");
+		Array.from(elements).forEach(element => {
+			if (element && element.innerHTML)
+				element.innerHTML = new Date(element.innerHTML * 1000).toLocaleString();
+		});
+	})();	
+</script>
+{% INCLUDE 'simple_footer.html' %}

@@ -1,0 +1,3 @@
+parameters:
+    privet.ailabs.tables.users: '%core.table_prefix%ailabs_users'
+    privet.ailabs.tables.jobs: '%core.table_prefix%ailabs_jobs'

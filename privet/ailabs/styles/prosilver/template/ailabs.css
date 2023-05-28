@@ -1,0 +1,43 @@
+.ailabs {
+    padding: 1px 0;
+    display: inline-flex;
+    float: left;
+}
+
+.ailabs div {
+    margin-left: 3px;
+}
+
+.ailabs-log div {
+    padding-bottom: 3px;
+    display: flex;
+}
+
+.ailabs-log label {
+    width: 100px;
+    font-weight: bold;
+}
+
+.ailabs-log textarea {
+    width: 100%;
+    resize: vertical;
+    /* Allow resizing in both directions */
+    overflow: auto;
+    /* Add scrollbars when content overflows */
+    /* pointer-events: none; */
+    /* Make the textarea read-only */
+    border: none;
+    /* Remove the border from the textarea */
+    outline: none;
+    /* Remove the outline when focused */
+    /* background: inherit; */
+    /* Remove the background */
+    font-family: inherit;
+    /* Inherit the font-family from the parent */
+    font-size: inherit;
+    /* Inherit the font-size from the parent */
+    line-height: inherit;
+    /* Inherit the line-height from the parent */
+    color: inherit;
+    /* Inherit the text color from the parent */
+}
