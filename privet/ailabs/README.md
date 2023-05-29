@@ -110,11 +110,14 @@ This extension is currently being actively developed. For communication, please 
 
 ## Changelog 
 
-* 1.0.1
-- Fixed issues reported by [ Miri4ever](https://www.phpbb.com/community/viewtopic.php?p=15958523#p15958523)
-- Removed all MySQL specific SQL, going forward extension should be SQL server agnostic 
-- Better language management 
-- Minor code cleanup
+* 1.0.1 May 29, 2023
+  - Fixed issues reported by [ Miri4ever](https://www.phpbb.com/community/viewtopic.php?p=15958523#p15958523)
+  - Removed all MySQL specific SQL, going forward extension should be SQL server agnostic 
+  - Better language management 
+  - Minor code cleanup
+
+* 1.0.0 May 28, 2023
+  - Public release
 
 ## License
 
