@@ -1,4 +1,4 @@
-# AI Labs v 1.0.0
+# AI Labs v 1.0.0 RC
 
 Incorporate AI into your phpBB board and get ready for an exciting experience.  
 Currently supported ChatGPT, DALL-E (OpenAI) and Stable Diffusion (Stability AI).  
@@ -8,8 +8,10 @@ Examples:
  - [ChatGPT](https://privet.fun/viewtopic.php?t=2802) 
  - [ChatGPT, custom prompt](https://privet.fun/viewtopic.php?t=2799) 
  - [DALL-E](https://privet.fun/viewtopic.php?t=2800)
- - [Stable Diffusion](https://privet.fun/viewtopic.php?t=2801)  
- - [Midjourney](https://privet.fun/viewtopic.php?t=2718)
+ - [Stable Diffusion by Stability AI](https://privet.fun/viewtopic.php?t=2801)  
+ - [Midjourney, coming soon 🚀](https://privet.fun/viewtopic.php?t=2718)
+ - [Stable Diffusion by Leonardo AI, coming soon 🚀](https://privet.fun/viewtopic.php?t=2605)  
+    Also available as Telegram bot https://t.me/stable_diffusion_superbot
 
 ## Requirements
 * php >=7.1
