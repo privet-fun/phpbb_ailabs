@@ -1,6 +1,6 @@
 {% if postrow.U_AILABS %}
 <div id="ailabs-post-{{ postrow.POST_ID }}" class="ailabs">
-	<span>AI&nbsp;</span>
+	<span>{{ lang('L_AILABS_AI') }}&nbsp;</span>
 	{% if postrow.U_AILABS_VIEW_LOG %}
 	<a href="{{ postrow.U_AILABS_VIEW_LOG }}" onclick="ailabs_view_log(this.href);return false;"><i
 			class="icon tpr-font fa-external-link fa-fw"></i></a>

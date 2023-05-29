@@ -1,4 +1,4 @@
-# AI Labs v 1.0.0 RC
+# AI Labs v 1.0.1 RC
 
 Incorporate AI into your phpBB board and get ready for an exciting experience.  
 Currently supported ChatGPT, DALL-E (OpenAI) and Stable Diffusion (Stability AI).  
@@ -16,7 +16,6 @@ Examples:
 ## Requirements
 * php >=7.1
 * phpbb >= 3.2
-* only tested with MySQL/mariadb
 
 ## Important notes
 
@@ -108,6 +107,14 @@ Refer to https://platform.openai.com/docs/api-reference/images/create to learn m
 ## Support and suggestions
 
 This extension is currently being actively developed. For communication, please use https://github.com/privet-fun/phpbb_ailabs/issues.
+
+## Changelog 
+
+* 1.0.1
+- Fixed issues reported by [ Miri4ever](https://www.phpbb.com/community/viewtopic.php?p=15958523#p15958523)
+- Removed all MySQL specific SQL, going forward extension should be SQL server agnostic 
+- Better language management 
+- Minor code cleanup
 
 ## License
 

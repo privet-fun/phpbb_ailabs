@@ -46,8 +46,6 @@ class chatgpt extends AIController
 
     protected function process()
     {
-        $this->language->add_lang('common', 'privet/ailabs');
-
         $this->job['status'] = 'exec';
 
         $set = [

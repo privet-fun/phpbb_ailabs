@@ -62,7 +62,25 @@ class listener implements EventSubscriberInterface
             'core.posting_modify_submit_post_after' => 'post_ailabs_message',
             'core.viewtopic_post_rowset_data'       => 'viewtopic_post_rowset_data',
             'core.viewtopic_modify_post_row'        => 'viewtopic_modify_post_row',
+            'core.user_setup'                       => 'load_language_on_setup',
         );
+    }
+
+    /**
+     * https://area51.phpbb.com/docs/dev/3.2.x/extensions/tutorial_events.html
+     * Load the Acme Demo language file
+     *     acme/demo/language/en/demo.php
+     *
+     * @param \phpbb\event\data $event The event object
+     */
+    public function load_language_on_setup($event)
+    {
+        $lang_set_ext = $event['lang_set_ext'];
+        $lang_set_ext[] = array(
+            'ext_name' => 'privet/ailabs',
+            'lang_set' => 'common',
+        );
+        $event['lang_set_ext'] = $lang_set_ext;
     }
 
     /**
@@ -228,8 +246,6 @@ class listener implements EventSubscriberInterface
 
     private function get_status($status)
     {
-        $this->language->add_lang('common', 'privet/ailabs');        
-
         switch ($status) {
             case null:
                 return $this->language->lang('AILABS_THINKING');
@@ -240,7 +256,7 @@ class listener implements EventSubscriberInterface
             case 'fail':
                 return $this->language->lang('AILABS_UNABLE_TO_REPLY');
         }
-        
+
         return $status;
     }
 
@@ -299,12 +315,12 @@ class listener implements EventSubscriberInterface
         }
 
         if (!empty($ailabs)) {
-            $event['post_row'] = array_merge($event['post_row'], [
-                'U_AILABS' => $ailabs,
+            $event['post_row'] = array_merge($event['post_row'], [                
+                'U_AILABS'              => $ailabs,
             ]);
             if ($this->auth->acl_get('a_', 'm_')) {
                 $event['post_row'] = array_merge($event['post_row'], [
-                    'U_AILABS_VIEW_LOG'    => $this->helper->route('privet_ailabs_view_log_controller_page', ['post_id' => $post_id]),
+                    'U_AILABS_VIEW_LOG' => $this->helper->route('privet_ailabs_view_log_controller_page', ['post_id' => $post_id]),
                 ]);
             }
         }

@@ -31,7 +31,6 @@ class acp_controller //implements acp_interface
 	protected $submit;
 	protected $u_action;
 	protected $user_id;
-	protected $ailabs_enabled;
 	protected $tpr_ailabs;
 
 	protected $desc_contollers = [
@@ -75,12 +74,11 @@ class acp_controller //implements acp_interface
 		$this->submit = $submit;
 		$this->u_action = $u_action;
 		$this->user_id = $this->request->variable('user_id', 0);
-		$this->ailabs_enabled = !empty($this->config['ailabs_enabled']) ? true : false;
 	}
 
 	public function edit_add()
 	{
-		$username = utf8_normalize_nfc($this->request->variable('ailabs_username', '', true));
+		$username = $this->request->variable('ailabs_username', '', true);
 		$new_user_id = $this->find_user_id($username);
 
 		if ($this->action == 'edit' && empty($this->user_id)) {
@@ -92,8 +90,8 @@ class acp_controller //implements acp_interface
 		$data = [
 			'user_id'			=> $new_user_id,
 			'controller'		=> $this->request->variable('ailabs_controller', ''),
-			'config'			=> utf8_normalize_nfc($this->request->variable('ailabs_config', '', true)),
-			'template'			=> utf8_normalize_nfc($this->request->variable('ailabs_template', '', true)),
+			'config'			=> $this->request->variable('ailabs_config', '', true),
+			'template'			=> $this->request->variable('ailabs_template', '', true),
 			'forums_post'		=> $this->request->variable('ailabs_forums_post', ''),
 			'forums_mention'	=> $this->request->variable('ailabs_forums_mention', ''),
 			'enabled'			=> $this->request->variable('ailabs_enabled', true),
@@ -169,16 +167,6 @@ class acp_controller //implements acp_interface
 			}
 		}
 
-		$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE . ' ORDER BY left_id';
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result)) {
-			$this->template->assign_block_vars('AILABS_FORUMS_LIST', [
-				'VALUE'	=> $row['forum_id'],
-				'NAME' 	=> $row['forum_name']
-			]);
-		}
-		$this->db->sql_freeresult($result);
-
 		foreach ($this->desc_contollers as $key => $value) {
 			$controller = explode("/", $value);
 			$name = end($controller);
@@ -195,11 +183,12 @@ class acp_controller //implements acp_interface
 			array_merge(
 				$edit,
 				[
-					'S_ERROR'					=> isset($error) ? $error : '',
-					'U_AILABS_ADD_EDIT'			=> true,
-					'U_ACTION'					=> $this->action == 'add' ? $this->u_action . '&amp;action=add' : $this->u_action . '&amp;action=edit&amp;user_id=' . $this->user_id,
-					'U_BACK'					=> $this->u_action,
-					'U_FIND_USERNAME'			=> append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=searchuser&amp;form=ailabs_configuration&amp;field=ailabs_username&amp;select_single=true'),
+					'S_ERROR'				=> isset($error) ? $error : '',
+					'U_AILABS_ADD_EDIT'		=> true,
+					'U_ACTION'				=> $this->action == 'add' ? $this->u_action . '&amp;action=add' : $this->u_action . '&amp;action=edit&amp;user_id=' . $this->user_id,
+					'U_BACK'				=> $this->u_action,
+					'U_FIND_USERNAME'		=> append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=searchuser&amp;form=ailabs_configuration&amp;field=ailabs_username&amp;select_single=true'),
+					'AILABS_FORUMS_LIST'	=> $this->build_forums_list(),
 				]
 			)
 		);
@@ -222,14 +211,14 @@ class acp_controller //implements acp_interface
 
 	public function acp_ailabs_main()
 	{
-		$sql = 'SELECT a.*, u.username, ' .
-			'(SELECT GROUP_CONCAT(f.forum_name SEPARATOR ", ") FROM phpbblt_forums f WHERE INSTR(a.forums_post, CONCAT(\'"\',f.forum_id,\'"\')) > 0) as forums_post_names, ' .
-			'(SELECT GROUP_CONCAT(f.forum_name SEPARATOR ", ") FROM phpbblt_forums f WHERE INSTR(a.forums_mention, CONCAT(\'"\',f.forum_id,\'"\')) > 0) as forums_mention_names ' .
+		$sql = 'SELECT a.*, u.username ' .
 			'FROM ' . $this->ailabs_users_table . ' a ' .
 			'LEFT JOIN ' . USERS_TABLE . ' u ON u.user_id = a.user_id ' .
 			'ORDER BY u.username';
 
 		$result = $this->db->sql_query($sql);
+
+		$forums = $this->build_forums_list();
 
 		$ailabs_users = [];
 
@@ -240,6 +229,8 @@ class acp_controller //implements acp_interface
 
 			$controller = explode("/", $row['controller']);
 			$row['controller'] = end($controller);
+			$row['forums_post_names'] = $this->get_forums_names($row['forums_post'], $forums);
+			$row['forums_mention_names'] = $this->get_forums_names($row['forums_mention'], $forums);
 			$row['U_EDIT'] = $this->u_action . '&amp;action=edit&amp;user_id=' . $row['user_id'] . '&amp;hash=' . generate_link_hash('acp_ailabs');
 			$row['U_DELETE'] = $this->u_action . '&amp;action=delete&amp;user_id=' . $row['user_id'] . '&amp;username=' . $row['username'] . '&amp;hash=' . generate_link_hash('acp_ailabs');
 
@@ -302,4 +293,32 @@ class acp_controller //implements acp_interface
 		}
 		return $count;
 	}
+
+	protected function build_forums_list()
+	{
+		$return = [];
+		$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE . ' ORDER BY left_id';
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result)) {
+			$return[$row['forum_id']] = $row['forum_name'];
+		}
+		$this->db->sql_freeresult($result);
+		return $return;
+	}
+
+	protected function get_forums_names($str, $forums) {
+		$result = [];
+		if(!empty($str)) {
+			$arr = json_decode($str);
+			if(!empty($arr) && is_array($arr)) {
+				foreach($arr as $id)
+				{
+					 $name = empty($forums[$id]) ? $id : $forums[$id];
+					 array_push($result, $name);
+				}
+			}
+		}
+		return join(', ', $result);
+	}
+
 }

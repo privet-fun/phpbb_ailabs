@@ -230,9 +230,8 @@ class AIController
             'post_id' => $job['post_id']
         ];
         $set =  '\'' . json_encode($data) . ',\'';
-        $sql = 'UPDATE ' . POSTS_TABLE .
-            ' SET post_ailabs_data = CONCAT(post_ailabs_data, ' . $set . ')' .
-            ' WHERE ' . $this->db->sql_build_array('SELECT', $where);
+        $concat = $this->db->sql_concatenate('post_ailabs_data', $set);
+        $sql = 'UPDATE ' . POSTS_TABLE . ' SET post_ailabs_data = ' . $concat . ' WHERE ' . $this->db->sql_build_array('SELECT', $where);
         $result = $this->db->sql_query($sql);
         $this->db->sql_freeresult($result);
     }

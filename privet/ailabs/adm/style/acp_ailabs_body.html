@@ -199,8 +199,8 @@
 		<span>{{ lang('LBL_AILABS_REPLY_POST_FORUMS_EXPLAIN') }}</span>
 		<select id="ailabs_forums_post_select" class="chosen-select" multiple data-placeholder="{{ lang('LBL_AILABS_SELECT_FORUMS') }}"
 			style="width: 100%;">
-			{% for FORUM in AILABS_FORUMS_LIST %}
-			<option value="{{ FORUM.VALUE }}">{{ FORUM.NAME }}</option>
+			{% for key,value in AILABS_FORUMS_LIST %}
+			<option value="{{ key }}">{{ value }}</option>
 			{% endfor %}
 		</select>
 	</fieldset>
@@ -210,8 +210,8 @@
 		<span>{{ lang('LBL_AILABS_REPLY_QUOTE_FORUMS_EXPLAIN') }}</span>
 		<select id="ailabs_forums_mention_select" class="chosen-select" multiple data-placeholder="{{ lang('LBL_AILABS_SELECT_FORUMS') }}"
 			style="width: 100%;">
-			{% for FORUM in AILABS_FORUMS_LIST %}
-			<option value="{{ FORUM.VALUE }}">{{ FORUM.NAME }}</option>
+			{% for key,value in AILABS_FORUMS_LIST %}
+			<option value="{{ key }}">{{ value }}</option>
 			{% endfor %}
 		</select>
 	</fieldset>

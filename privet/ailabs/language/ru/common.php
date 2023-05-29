@@ -24,5 +24,6 @@ $lang = array_merge($lang, [
 	'AILABS_THINKING' 			=> 'думает',
 	'AILABS_REPLYING' 			=> 'отвечает…',
 	'AILABS_REPLIED' 			=> 'ответил ↓',
-	'AILABS_UNABLE_TO_REPLY' 	=> 'ответить не смог'
+	'AILABS_UNABLE_TO_REPLY' 	=> 'ответить не смог',
+	'L_AILABS_AI'				=> 'AI'
 ]);
