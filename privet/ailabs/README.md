@@ -45,7 +45,7 @@ Finally go to `ACP` > `Extensions` > `AI Labs` > `Settings` and add desired AI c
 
 *  You will need OpenAI account, sign up at https://platform.openai.com/.  
    To obtain API key go to https://platform.openai.com/account/api-keys, click on `Create new secret key`, copy and save in a safe place generated API key.  
-   Open AI key starts with `sk-` a look something like this `sk-rb5yW9j6Nm2kP3Fhe7CPzT1QczwDZ5LvnlBfYU2EoqyX1dWs`.  
+   Open AI key starts with `sk-` and look something like this `sk-rb5yW9j6Nm2kP3Fhe7CPzT1QczwDZ5LvnlBfYU2EoqyX1dWs`.  
 
 * Create new board user who will act as AI bot, for our example we will use user `ChatGPT`.  
   Make sure this user account is activated and fully functional.  
