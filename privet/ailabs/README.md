@@ -1,5 +1,5 @@
-# AI Labs v 1.0.2 RC
-##### [See changelog](#changelog)  
+# AI Labs v 1.0.3 RC
+##### [Changelog](#changelog)  
 
 Incorporate AI into your phpBB board and get ready for an exciting experience.  
 Currently supported ChatGPT, DALL-E (OpenAI) and Stable Diffusion (Stability AI).  
@@ -15,7 +15,7 @@ Examples:
     Also available as Telegram bot https://t.me/stable_diffusion_superbot
 
 ## Requirements
-* php >=7.1
+* php >=7.4
 * phpbb >= 3.2
 
 ## Important notes
@@ -111,10 +111,13 @@ This extension is currently being actively developed. For communication, please 
 
 ## <a name="changelog"></a>Changelog 
 
+* 1.0.3 June 1, 2023
+  - bumped php requirements to >= 7.4
+
 * 1.0.2 June 1, 2023
   - Only apply `utf8_encode_ucr` if present, reported by [Vlad__](https://www.phpbbguru.net/community/viewtopic.php?p=561158#p561158)  
    This will allow phpBB 3.2.1 support without any modifications. 
-  - Removed `...` and `array` to support php 7.1, reported by [Vlad__](https://www.phpbbguru.net/community/viewtopic.php?p=561163#p561163)
+  - Removed `...` and `array` to support php 7.x, reported by [Vlad__](https://www.phpbbguru.net/community/viewtopic.php?p=561163#p561163)
   - Added missing  `reply` processing for chatgpt controller, reported by [Vlad__](https://www.phpbbguru.net/community/viewtopic.php?p=561205#p561205)
   - Added board prefix to all links, reported by [Miri4ever](https://www.phpbb.com/community/viewtopic.php?p=15958961#p15958961)
 
