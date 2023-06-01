@@ -14,5 +14,5 @@ namespace privet\ailabs\includes;
 class resultSubmit
 {
     public string $response;
-    public array $responseCodes;
+    public $responseCodes;
 };

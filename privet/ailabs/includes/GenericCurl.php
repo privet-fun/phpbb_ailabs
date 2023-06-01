@@ -13,15 +13,15 @@ namespace privet\ailabs\includes;
 
 class GenericCurl
 {
-    private array $headers;
-    private array $contentTypes;
+    private $headers;
+    private $contentTypes;
     private int $timeout = 0;
     private object $stream_method;
     private string $proxy = "";
-    private array $curlInfo = [];
+    private $curlInfo = [];
     public int $retryCount;
     public int $timeoutBeforeRetrySec;
-    public array $responseCodes = [];
+    public $responseCodes = [];
 
     public function __construct($API_KEY, $retryCount = 3, $timeoutBeforeRetrySec = 10)
     {
@@ -71,7 +71,7 @@ class GenericCurl
      * @param  array  $header
      * @return void
      */
-    public function setHeader(array $header)
+    public function setHeader($header)
     {
         if ($header) {
             foreach ($header as $key => $value) {
@@ -86,7 +86,7 @@ class GenericCurl
      * @param  array   $opts
      * @return bool|string
      */
-    public function sendRequest(string $url, string $method, array $opts = [])
+    public function sendRequest(string $url, string $method, $opts = [])
     {
         $this->responseCodes = [];
 

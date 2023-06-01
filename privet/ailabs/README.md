@@ -1,4 +1,5 @@
-# AI Labs v 1.0.1 RC
+# AI Labs v 1.0.2 RC
+##### [Changelog](#changelog)  
 
 Incorporate AI into your phpBB board and get ready for an exciting experience.  
 Currently supported ChatGPT, DALL-E (OpenAI) and Stable Diffusion (Stability AI).  
@@ -108,10 +109,17 @@ Refer to https://platform.openai.com/docs/api-reference/images/create to learn m
 
 This extension is currently being actively developed. For communication, please use https://github.com/privet-fun/phpbb_ailabs/issues.
 
-## Changelog 
+## <a name="changelog"></a>Changelog 
+
+* 1.0.2 June 1, 2023
+  - Only apply `utf8_encode_ucr` if present, reported by [Vlad__](https://www.phpbbguru.net/community/viewtopic.php?p=561158#p561158)  
+   This will allow phpBB 3.2.1 support without any modifications. 
+  - Removed `...` and `array` to support php 7.1, reported by [Vlad__](https://www.phpbbguru.net/community/viewtopic.php?p=561163#p561163)
+  - Added missing  `reply` processing for chatgpt controller, reported by [Vlad__](https://www.phpbbguru.net/community/viewtopic.php?p=561205#p561205)
+  - Added board prefix to all links, reported by [Miri4ever](https://www.phpbb.com/community/viewtopic.php?p=15958961#p15958961)
 
 * 1.0.1 May 29, 2023
-  - Fixed issues reported by [ Miri4ever](https://www.phpbb.com/community/viewtopic.php?p=15958523#p15958523)
+  - Fixed issues reported by [Miri4ever](https://www.phpbb.com/community/viewtopic.php?p=15958523#p15958523)
   - Removed all MySQL specific SQL, going forward extension should be SQL server agnostic 
   - Better language management 
   - Minor code cleanup

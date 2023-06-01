@@ -148,6 +148,12 @@ class listener implements EventSubscriberInterface
         // Remove leading and trailing spaces as well as all doublespaces
         $request = trim(str_replace('  ', ' ', $request));
 
+        // utf8_encode_ucr added in phpBB v3.2.7 
+        // See comments at http://area51.phpbb.com/code-changes/3.2.7/side-by-side/3.2.11/phpbb-includes-utf-utf_tools.php.html
+        if (function_exists('utf8_encode_ucr')) {
+            $request = utf8_encode_ucr($request);
+        }
+
         // https://area51.phpbb.com/docs/dev/master/db/dbal.html
         foreach ($ailabs_users as $user) {
             $data = [
@@ -306,16 +312,16 @@ class listener implements EventSubscriberInterface
         $ailabs = array();
 
         foreach ($jobs as $key => $value) {
-            $value->user_url = '/' . append_sid("memberlist.$this->php_ext", 'mode=viewprofile&amp;u=' . $value->ailabs_user_id, true, '');
+            $value->user_url = generate_board_url() . '/' . append_sid("memberlist.$this->php_ext", 'mode=viewprofile&amp;u=' . $value->ailabs_user_id, true, '');
             if (!empty($value->response_post_id)) {
-                $value->response_url = '/viewtopic.php?p=' . $value->response_post_id . '#p' . $value->response_post_id;
+                $value->response_url = generate_board_url() . '/' . append_sid('viewtopic.php?p=' . $value->response_post_id . '#p' . $value->response_post_id, true, '');
             }
             $value->status = $this->get_status(empty($value->status) ? null : $value->status);
             array_push($ailabs, $value);
         }
 
         if (!empty($ailabs)) {
-            $event['post_row'] = array_merge($event['post_row'], [                
+            $event['post_row'] = array_merge($event['post_row'], [
                 'U_AILABS'              => $ailabs,
             ]);
             if ($this->auth->acl_get('a_', 'm_')) {

@@ -90,8 +90,9 @@ class chatgpt extends AIController
         $posts = [];
         $post_first_taken = null;
         $post_first_discarded = null;
+        $mode = $this->job['post_mode'];
 
-        if ($this->job['post_mode'] == 'quote') {
+        if ($mode == 'reply' || $mode == 'quote') {
             $history = ['post_text' => $this->job['post_text']];
 
             $pattern = '/<QUOTE\sauthor="' . $this->job['ailabs_username'] . '"\spost_id="(.*)"\stime="(.*)"\suser_id="' . $this->job['ailabs_user_id'] . '">/';
@@ -144,15 +145,11 @@ class chatgpt extends AIController
                         $post_first_taken = $postid;
                         $history_tokens += $count_tokens;
 
-                        $post_messages = [
+                        array_unshift(
+                            $messages,
                             ['role' => 'user', 'content' => trim($history['request'])],
-                            ['role' => 'assistant', 'content' => trim($history['response'])],
-                        ];
-
-                        $messages = [
-                            ...$post_messages,
-                            ...$messages
-                        ];
+                            ['role' => 'assistant', 'content' => trim($history['response'])]
+                        );
                     }
                 }
             } while (!empty($history));
@@ -164,16 +161,13 @@ class chatgpt extends AIController
         }
 
         if (!empty($this->cfg->prefix)) {
-            $messages = [
+            array_unshift(
+                $messages,
                 ['role' => 'system', 'content' => $this->cfg->prefix],
-                ...$messages
-            ];
+            );
         }
 
-        $messages = [
-            ...$messages,
-            ['role' => 'user', 'content' => trim($this->job['request'])]
-        ];
+        $messages[] =  ['role' => 'user', 'content' => trim($this->job['request'])];
 
         $this->log['request.messages'] = $messages;
         $this->log_flush();
