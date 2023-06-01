@@ -113,6 +113,7 @@ This extension is currently being actively developed. For communication, please 
 
 * 1.0.3 June 1, 2023
   - bumped php requirements to >= 7.4
+  - Comma removed, reported by [Vlad__](https://www.phpbbguru.net/community/viewtopic.php?p=561224#p561224)  
 
 * 1.0.2 June 1, 2023
   - Only apply `utf8_encode_ucr` if present, reported by [Vlad__](https://www.phpbbguru.net/community/viewtopic.php?p=561158#p561158)  

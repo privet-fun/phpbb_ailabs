@@ -163,7 +163,7 @@ class chatgpt extends AIController
         if (!empty($this->cfg->prefix)) {
             array_unshift(
                 $messages,
-                ['role' => 'system', 'content' => $this->cfg->prefix],
+                ['role' => 'system', 'content' => $this->cfg->prefix]
             );
         }
 
