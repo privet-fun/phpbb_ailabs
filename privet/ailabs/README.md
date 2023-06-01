@@ -1,5 +1,5 @@
 # AI Labs v 1.0.3 RC
-##### [Changelog](#changelog)  
+##### [Changelog](#changelog_link)  
 
 Incorporate AI into your phpBB board and get ready for an exciting experience.  
 Currently supported ChatGPT, DALL-E (OpenAI) and Stable Diffusion (Stability AI).  
@@ -109,7 +109,7 @@ Refer to https://platform.openai.com/docs/api-reference/images/create to learn m
 
 This extension is currently being actively developed. For communication, please use https://github.com/privet-fun/phpbb_ailabs/issues.
 
-## <a name="changelog"></a>Changelog 
+## <a name="changelog_link"></a>Changelog 
 
 * 1.0.3 June 1, 2023
   - bumped php requirements to >= 7.4
