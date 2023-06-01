@@ -1,5 +1,5 @@
 # AI Labs v 1.0.2 RC
-##### [Changelog](#changelog)  
+##### [See changelog](#changelog)  
 
 Incorporate AI into your phpBB board and get ready for an exciting experience.  
 Currently supported ChatGPT, DALL-E (OpenAI) and Stable Diffusion (Stability AI).  
