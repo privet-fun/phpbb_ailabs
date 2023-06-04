@@ -92,72 +92,71 @@ class chatgpt extends AIController
         $post_first_discarded = null;
         $mode = $this->job['post_mode'];
 
-        if ($mode == 'reply' || $mode == 'quote') {
-            $history = ['post_text' => $this->job['post_text']];
+        $history = ['post_text' => $this->job['post_text']];
 
-            $pattern = '/<QUOTE\sauthor="' . $this->job['ailabs_username'] . '"\spost_id="(.*)"\stime="(.*)"\suser_id="' . $this->job['ailabs_user_id'] . '">/';
+        $pattern = '/<QUOTE\sauthor="' . $this->job['ailabs_username'] . '"\spost_id="(.*)"\stime="(.*)"\suser_id="' . $this->job['ailabs_user_id'] . '">/';
 
-            $this->log['history.pattern'] = $pattern;
-            $this->log_flush();
+        $this->log['history.pattern'] = $pattern;
+        $this->log_flush();
 
-            $history_tokens = 0;
-            $round = -1;
-            do {
-                $round++;
-                $matches = null;
-                preg_match_all(
-                    $pattern,
-                    $history['post_text'],
-                    $matches
-                );
+        // Attempt to unwind history using quoted posts
+        $history_tokens = 0;
+        $round = -1;
+        do {
+            $round++;
+            $matches = null;
+            preg_match_all(
+                $pattern,
+                $history['post_text'],
+                $matches
+            );
 
-                $history = null;
+            $history = null;
 
-                if ($matches != null && !empty($matches) && !empty($matches[1][0])) {
-                    $postid = (int) $matches[1][0];
+            if ($matches != null && !empty($matches) && !empty($matches[1][0])) {
+                $postid = (int) $matches[1][0];
 
-                    $sql = 'SELECT j.job_id, j.post_id, j.response_post_id, j.request, j.response, p.post_text, j.request_tokens, j.response_tokens ' .
-                        'FROM ' . $this->jobs_table . ' j ' .
-                        'JOIN ' . POSTS_TABLE . ' p ON p.post_id = j.post_id ' .
-                        'WHERE ' . $this->db->sql_build_array('SELECT', ['response_post_id' => $postid]);
-                    $result = $this->db->sql_query($sql);
-                    $history = $this->db->sql_fetchrow($result);
-                    $this->db->sql_freeresult($result);
+                $sql = 'SELECT j.job_id, j.post_id, j.response_post_id, j.request, j.response, p.post_text, j.request_tokens, j.response_tokens ' .
+                    'FROM ' . $this->jobs_table . ' j ' .
+                    'JOIN ' . POSTS_TABLE . ' p ON p.post_id = j.post_id ' .
+                    'WHERE ' . $this->db->sql_build_array('SELECT', ['response_post_id' => $postid]);
+                $result = $this->db->sql_query($sql);
+                $history = $this->db->sql_fetchrow($result);
+                $this->db->sql_freeresult($result);
 
-                    if (!empty($history)) {
-                        $count_tokens = $history['request_tokens'] + $history['response_tokens'];
+                if (!empty($history)) {
+                    $count_tokens = $history['request_tokens'] + $history['response_tokens'];
 
-                        $discard = $this->max_tokens < ($this->message_tokens + $history_tokens + $count_tokens);
+                    $discard = $this->max_tokens < ($this->message_tokens + $history_tokens + $count_tokens);
 
-                        $posts[] = [
-                            'postid'                => $postid,
-                            'request_tokens'        => $history['request_tokens'],
-                            'response_tokens'       => $history['response_tokens'],
-                            'runnig_total_tokens'   => $history_tokens + $count_tokens,
-                            'discard'               => $discard
-                        ];
+                    $posts[] = [
+                        'postid'                => $postid,
+                        'request_tokens'        => $history['request_tokens'],
+                        'response_tokens'       => $history['response_tokens'],
+                        'runnig_total_tokens'   => $history_tokens + $count_tokens,
+                        'discard'               => $discard
+                    ];
 
-                        if ($discard) {
-                            $post_first_discarded = $postid;
-                            break;
-                        }
-
-                        $post_first_taken = $postid;
-                        $history_tokens += $count_tokens;
-
-                        array_unshift(
-                            $messages,
-                            ['role' => 'user', 'content' => trim($history['request'])],
-                            ['role' => 'assistant', 'content' => trim($history['response'])]
-                        );
+                    if ($discard) {
+                        $post_first_discarded = $postid;
+                        break;
                     }
-                }
-            } while (!empty($history));
 
-            if (!empty($posts)) {
-                $this->log['history.posts'] = $posts;
-                $this->log_flush();
+                    $post_first_taken = $postid;
+                    $history_tokens += $count_tokens;
+
+                    array_unshift(
+                        $messages,
+                        ['role' => 'user', 'content' => trim($history['request'])],
+                        ['role' => 'assistant', 'content' => trim($history['response'])]
+                    );
+                }
             }
+        } while (!empty($history));
+
+        if (!empty($posts)) {
+            $this->log['history.posts'] = $posts;
+            $this->log_flush();
         }
 
         if (!empty($this->cfg->prefix)) {
@@ -237,14 +236,16 @@ class chatgpt extends AIController
         $this->log['finish'] = date('Y-m-d H:i:s');
 
         if (!empty($posts)) {
+            $viewtopic = "{$this->root_path}viewtopic.{$this->php_ext}";
             $discarded = '';
             if ($post_first_discarded != null) {
-                $discarded = $this->language->lang('AILABS_POSTS_DISCARDED', $post_first_discarded);
+                $discarded = $this->language->lang('AILABS_POSTS_DISCARDED', $viewtopic, $post_first_discarded);
             }
             $total_posts_count = count($posts) * 2 + 2;
             $total_tokens_used_count = $request_tokens + $response_tokens;
             $info = $this->language->lang(
                 'AILABS_DISCARDED_INFO',
+                $viewtopic,
                 $post_first_taken,
                 $total_posts_count,
                 $discarded,

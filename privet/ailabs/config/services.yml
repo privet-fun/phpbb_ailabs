@@ -15,6 +15,7 @@ services:
             - '@template'
             - '@user'
             - '%core.root_path%'
+            - '%core.php_ext%'
             - '%privet.ailabs.tables.users%'
 
     privet.ailabs.listener:

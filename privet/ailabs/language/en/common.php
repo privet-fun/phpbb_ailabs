@@ -19,8 +19,8 @@ if (empty($lang) || !is_array($lang)) {
 
 $lang = array_merge($lang, [
 	'AILABS_ERROR_CHECK_LOGS'	=> '[color=#FF0000]Error. Pelase check logs.[/color]',
-	'AILABS_POSTS_DISCARDED'  	=> ', posts starting from [url=/viewtopic.php?p=%1$d#p%1$d]this post[/url] were discarded',
-	'AILABS_DISCARDED_INFO' 	=> '[size=75][url=/viewtopic.php?p=%1$d#p%1$d]Beginning[/url] of a conversation containing %2$d posts%3$s (%4$d tokens of %5$d were used)[/size]',
+	'AILABS_POSTS_DISCARDED'  	=> ', posts starting from [url=%1$s?p=%2$d#p%2$d]this post[/url] were discarded',
+	'AILABS_DISCARDED_INFO' 	=> '[size=75][url=%1$s?p=%2$d#p%2$d]Beginning[/url] of a conversation containing %3$d posts%4$s (%5$d tokens of %6$d were used)[/size]',
 	'AILABS_THINKING' 			=> 'thinking',
 	'AILABS_REPLYING' 			=> 'replying…',
 	'AILABS_REPLIED' 			=> 'replied ↓',

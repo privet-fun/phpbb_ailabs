@@ -240,8 +240,14 @@ class AIController
     {
         // Prep posting
         $poll = $uid = $bitfield = $options = '';
-        $allow_bbcode = $allow_urls = $allow_smilies = true;
-        generate_text_for_storage($response, $uid, $bitfield, $options, $allow_bbcode, $allow_urls, $allow_smilies);
+        generate_text_for_storage($response, $uid, $bitfield, $options, true, true, true);
+
+        // For some reason uid is not calculated by generate_text_for_storage 
+        if (empty($uid)) {
+            $message_parser = new \parse_message($response);
+            $message_parser->parse(true, true, true);
+            $uid = $message_parser->bbcode_uid;
+        }
 
         $data = array(
             'poster_id'             => $job['ailabs_user_id'],

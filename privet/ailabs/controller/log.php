@@ -33,10 +33,10 @@ class log extends AIController
 
         if (!empty($data)) {
             foreach ($data as &$row) {
-                $row['poster_user_url'] = generate_board_url() . '/' . append_sid("memberlist.$this->php_ext", 'mode=viewprofile&amp;u=' . $row['poster_id'], true, '');
-                $row['ailabs_user_url'] = generate_board_url() . '/' . append_sid("memberlist.$this->php_ext", 'mode=viewprofile&amp;u=' . $row['ailabs_user_id'], true, '');
+                $row['poster_user_url'] = generate_board_url() . '/' . append_sid("memberlist.$this->php_ext", 'mode=viewprofile&amp;u=' . $row['poster_id'], true, $this->user->session_id);
+                $row['ailabs_user_url'] = generate_board_url() . '/' . append_sid("memberlist.$this->php_ext", 'mode=viewprofile&amp;u=' . $row['ailabs_user_id'], true, $this->user->session_id);
                 if (!empty($row['response_post_id'])) {
-                    $row['response_url'] = generate_board_url() . '/' . append_sid('viewtopic.php?p=' . $row['response_post_id'] . '#p' . $row['response_post_id'], true, '');
+                    $row['response_url'] = generate_board_url() . '/' . append_sid("viewtopic.$this->php_ext", 'p=' . $row['response_post_id'] . '#p' . $row['response_post_id'], true, $this->user->session_id);
                 }
             }
 

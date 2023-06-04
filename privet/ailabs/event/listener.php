@@ -115,8 +115,12 @@ class listener implements EventSubscriberInterface
             if ($mode == 'post' && $user['post'] == 1) {
                 array_push($ailabs_users, $user);
             } else {
-                if ($user['mention'] == 1 && in_array($user['user_id'], $ailabs_users_notified))
+                if ($mode == 'reply' && $user['reply'] == 1) {
                     array_push($ailabs_users, $user);
+                } else {
+                    if ($user['mention'] == 1 && in_array($user['user_id'], $ailabs_users_notified))
+                        array_push($ailabs_users, $user);
+                }
             }
         }
 
@@ -154,6 +158,39 @@ class listener implements EventSubscriberInterface
             $request = utf8_encode_ucr($request);
         }
 
+        global $config;
+
+        $cookie_name = $config['cookie_name'];
+        $headers = [];
+
+        $copy_headers = ['X-Forwarded-For', 'User-Agent'];
+        foreach ($copy_headers as $header_name) {
+            if (!empty($this->request->header($header_name))) {
+                array_push($headers, "$header_name: " . $this->request->header($header_name));
+            }
+        }
+
+        $cookies = [];
+        if ($this->request->is_set($cookie_name . '_sid', \phpbb\request\request_interface::COOKIE) || $this->request->is_set($cookie_name . '_u', \phpbb\request\request_interface::COOKIE)) {
+            array_push($cookies, $cookie_name . '_u=' . $this->request->variable($cookie_name . '_u', 0, false, \phpbb\request\request_interface::COOKIE));
+            array_push($cookies, $cookie_name . '_k=' . $this->request->variable($cookie_name . '_k', '', false, \phpbb\request\request_interface::COOKIE));
+            array_push($cookies, $cookie_name . '_sid=' . $this->request->variable($cookie_name . '_sid', '', false, \phpbb\request\request_interface::COOKIE));
+
+            array_push($headers, "Cookie: " . implode('; ', $cookies));
+        }
+
+        $context = null;
+        if (!empty($headers)) {
+            $context = stream_context_create(
+                array(
+                    'http' => array(
+                        'method' => "HEAD",
+                        'header' => implode("\r\n", $headers)
+                    )
+                )
+            );
+        }
+
         // https://area51.phpbb.com/docs/dev/master/db/dbal.html
         foreach ($ailabs_users as $user) {
             $data = [
@@ -174,8 +211,11 @@ class listener implements EventSubscriberInterface
 
             $this->update_post($data);
 
-            $url = generate_board_url() . $user['controller'] . '?job_id=' . $data['job_id'];
-            get_headers($url);
+            $url = append_sid(generate_board_url() . $user['controller'], ['job_id' => $data['job_id']], true, $this->user->session_id);
+
+            // Provide same cookies, session id and browser name so phpBB can authenticate user. 
+            // Verify that Server Configuration > Security Settings > Session IP validation set to none 
+            get_headers($url, false, $context);
             unset($data);
         }
     }
@@ -211,6 +251,7 @@ class listener implements EventSubscriberInterface
         $return = array();
         $sql = 'SELECT c.user_id, ' .
             'c.forums_post LIKE \'%"' . $id . '"%\' as post, ' .
+            'c.forums_reply LIKE \'%"' . $id . '"%\' as reply, ' .
             'c.forums_mention LIKE \'%"' . $id . '"%\' as mention, ' .
             'c.controller, ' .
             'u.username ' .
@@ -223,6 +264,7 @@ class listener implements EventSubscriberInterface
                 'user_id' => $row['user_id'],
                 'username' => $row['username'],
                 'post' => $row['post'],
+                'reply' => $row['reply'],
                 'mention' => $row['mention'],
                 'controller' => $row['controller']
             ));
@@ -312,9 +354,9 @@ class listener implements EventSubscriberInterface
         $ailabs = array();
 
         foreach ($jobs as $key => $value) {
-            $value->user_url = generate_board_url() . '/' . append_sid("memberlist.$this->php_ext", 'mode=viewprofile&amp;u=' . $value->ailabs_user_id, true, '');
+            $value->user_url = generate_board_url() . '/' . append_sid("memberlist.$this->php_ext", 'mode=viewprofile&amp;u=' . $value->ailabs_user_id, true, $this->user->session_id);
             if (!empty($value->response_post_id)) {
-                $value->response_url = generate_board_url() . '/' . append_sid('viewtopic.php?p=' . $value->response_post_id . '#p' . $value->response_post_id, true, '');
+                $value->response_url = generate_board_url() . '/' . append_sid("viewtopic.$this->php_ext", "p=$value->response_post_id#p$value->response_post_id", true, $this->user->session_id);
             }
             $value->status = $this->get_status(empty($value->status) ? null : $value->status);
             array_push($ailabs, $value);

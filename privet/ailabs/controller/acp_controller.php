@@ -23,6 +23,7 @@ class acp_controller //implements acp_interface
 	protected $template;
 	protected $user;
 	protected $root_path;
+	protected $php_ext;
 	protected $ailabs_users_table;
 
 	protected $id;
@@ -51,6 +52,7 @@ class acp_controller //implements acp_interface
 		\phpbb\template\template $template,
 		\phpbb\user $user,
 		$root_path,
+		$php_ext,
 		$ailabs_users_table
 	) {
 		$this->config = $config;
@@ -63,6 +65,7 @@ class acp_controller //implements acp_interface
 		$this->template = $template;
 		$this->user = $user;
 		$this->root_path = $root_path;
+		$this->php_ext = $php_ext;
 		$this->ailabs_users_table = $ailabs_users_table;
 	}
 
@@ -93,6 +96,7 @@ class acp_controller //implements acp_interface
 			'config'			=> $this->request->variable('ailabs_config', '', true),
 			'template'			=> $this->request->variable('ailabs_template', '', true),
 			'forums_post'		=> $this->request->variable('ailabs_forums_post', ''),
+			'forums_reply'		=> $this->request->variable('ailabs_forums_reply', ''),
 			'forums_mention'	=> $this->request->variable('ailabs_forums_mention', ''),
 			'enabled'			=> $this->request->variable('ailabs_enabled', true),
 		];
@@ -111,8 +115,8 @@ class acp_controller //implements acp_interface
 				trigger_error($this->language->lang('AILABS_USER_ALREADY_CONFIGURED', $username) . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 
-			if (empty($data['forums_post']) && empty($data['forums_mention'])) {
-				trigger_error($this->language->lang('AILABS_SPECIFY_POST_OR_MENTION') . adm_back_link($this->u_action), E_USER_WARNING);
+			if (empty($data['forums_post']) && empty($data['forums_reply']) && empty($data['forums_mention'])) {
+				trigger_error($this->language->lang('AILABS_SPECIFY_FORUM') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 
 			if (!isset($error)) {
@@ -122,6 +126,7 @@ class acp_controller //implements acp_interface
 					'config'			=> (string) html_entity_decode($data['config']),
 					'template'			=> (string) html_entity_decode($data['template']),
 					'forums_post'		=> (string) html_entity_decode($data['forums_post']),
+					'forums_reply'		=> (string) html_entity_decode($data['forums_reply']),
 					'forums_mention'	=> (string) html_entity_decode($data['forums_mention']),
 					'enabled'			=> (bool) $data['enabled']
 				];
@@ -159,6 +164,7 @@ class acp_controller //implements acp_interface
 					'ailabs_config'			=> (string) $row['config'],
 					'ailabs_template'		=> (string) $row['template'],
 					'ailabs_forums_post'	=> (string) $row['forums_post'],
+					'ailabs_forums_reply'	=> (string) $row['forums_reply'],
 					'ailabs_forums_mention'	=> (string) $row['forums_mention'],
 					'ailabs_enabled'		=> (bool) $row['enabled']
 				];
@@ -177,8 +183,6 @@ class acp_controller //implements acp_interface
 			]);
 		}
 
-		global $phpbb_root_path, $phpEx;
-
 		$this->template->assign_vars(
 			array_merge(
 				$edit,
@@ -187,8 +191,9 @@ class acp_controller //implements acp_interface
 					'U_AILABS_ADD_EDIT'		=> true,
 					'U_ACTION'				=> $this->action == 'add' ? $this->u_action . '&amp;action=add' : $this->u_action . '&amp;action=edit&amp;user_id=' . $this->user_id,
 					'U_BACK'				=> $this->u_action,
-					'U_FIND_USERNAME'		=> append_sid("{$phpbb_root_path}memberlist.$phpEx", 'mode=searchuser&amp;form=ailabs_configuration&amp;field=ailabs_username&amp;select_single=true'),
+					'U_FIND_USERNAME'		=> generate_board_url() . '/' . append_sid("memberlist.$this->php_ext", 'mode=searchuser&amp;form=ailabs_configuration&amp;field=ailabs_username&amp;select_single=true', true, $this->user->session_id),
 					'AILABS_FORUMS_LIST'	=> $this->build_forums_list(),
+					'U_AILABS_VERSION'		=> $this->config['privet_ailabs_version'],
 				]
 			)
 		);
@@ -229,7 +234,9 @@ class acp_controller //implements acp_interface
 
 			$controller = explode("/", $row['controller']);
 			$row['controller'] = end($controller);
+			$row['username_url'] = generate_board_url() . '/' . append_sid("memberlist.$this->php_ext", 'mode=viewprofile&amp;u=' . $row['user_id'], true, $this->user->session_id);
 			$row['forums_post_names'] = $this->get_forums_names($row['forums_post'], $forums);
+			$row['forums_reply_names'] = $this->get_forums_names($row['forums_reply'], $forums);
 			$row['forums_mention_names'] = $this->get_forums_names($row['forums_mention'], $forums);
 			$row['U_EDIT'] = $this->u_action . '&amp;action=edit&amp;user_id=' . $row['user_id'] . '&amp;hash=' . generate_link_hash('acp_ailabs');
 			$row['U_DELETE'] = $this->u_action . '&amp;action=delete&amp;user_id=' . $row['user_id'] . '&amp;username=' . $row['username'] . '&amp;hash=' . generate_link_hash('acp_ailabs');
@@ -243,10 +250,21 @@ class acp_controller //implements acp_interface
 			'U_AILABS_USERS'		=> $ailabs_users,
 			'U_ADD'					=> $this->u_action . '&amp;action=add',
 			'U_ACTION'				=> $this->u_action,
-			'U_AILABS_VEIW'			=> true
+			'U_AILABS_VEIW'			=> true,
+			'U_AILABS_VERSION'		=> $this->config['privet_ailabs_version'],
+			'U_IP_CHECK'			=> $this->warn_ip_check()
 		];
 
 		return $this->template->assign_vars($template_vars);
+	}
+
+	protected function warn_ip_check()
+	{
+		if ($this->config['ip_check'] != 0) {
+			$url = generate_board_url() . '/' . append_sid("adm/index.$this->php_ext", ['i' => 'acp_board', 'mode' => 'security'], true, $this->user->session_id);
+			return $this->language->lang('LBL_AILABS_IP_VALIDATION', $url);
+		}
+		return null;
 	}
 
 	protected function find_user_id($username)
@@ -306,19 +324,18 @@ class acp_controller //implements acp_interface
 		return $return;
 	}
 
-	protected function get_forums_names($str, $forums) {
+	protected function get_forums_names($str, $forums)
+	{
 		$result = [];
-		if(!empty($str)) {
+		if (!empty($str)) {
 			$arr = json_decode($str);
-			if(!empty($arr) && is_array($arr)) {
-				foreach($arr as $id)
-				{
-					 $name = empty($forums[$id]) ? $id : $forums[$id];
-					 array_push($result, $name);
+			if (!empty($arr) && is_array($arr)) {
+				foreach ($arr as $id) {
+					$name = empty($forums[$id]) ? $id : $forums[$id];
+					array_push($result, $name);
 				}
 			}
 		}
 		return join(', ', $result);
 	}
-
 }
