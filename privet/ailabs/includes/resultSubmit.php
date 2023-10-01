@@ -15,4 +15,5 @@ class resultSubmit
 {
     public string $response;
     public $responseCodes;
+    public bool $ignore = false;
 };

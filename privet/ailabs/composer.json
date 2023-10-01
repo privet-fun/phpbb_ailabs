@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "AI Labs",
     "homepage": "https://privet.fun",
-    "version": "1.0.4",
-    "time": "2023-06-04",
+    "version": "1.0.5",
+    "time": "2023-10-01",
     "keywords": [
         "phpbb",
         "extension",

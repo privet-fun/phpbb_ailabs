@@ -18,6 +18,8 @@ use privet\ailabs\includes\resultSubmit;
 
 class GenericController extends AIController
 {
+    public $redactOpts = [];
+
     // Cleansing and setting back $this->job['request']
     // Return $opts or empty array
     protected function init()
@@ -73,7 +75,13 @@ class GenericController extends AIController
 
         $opts = $this->prepare($opts);
 
-        $this->log['request.json'] = $opts;
+        $optsCloned = json_decode(json_encode($opts), true);
+
+        foreach ($this->redactOpts as $key) {
+            unset($optsCloned[$key]);
+        }
+
+        $this->log['request.json'] = $optsCloned;
         $this->log_flush();
 
         $this->job['status'] = 'fail';
@@ -83,6 +91,9 @@ class GenericController extends AIController
 
         try {
             $resultSubmit = $this->submit($opts);
+
+            if ($resultSubmit->ignore)
+                return new JsonResponse('waiting for callback');
 
             $this->log['response.length'] = strlen($resultSubmit->response);
             $this->log['response.codes'] = $resultSubmit->responseCodes;

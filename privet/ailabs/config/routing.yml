@@ -10,6 +10,21 @@ privet_stablediffusion_page:
     path: /ailabs/stablediffusion
     defaults: { _controller: privet.ailabs.controller_stablediffusion:execute }
 
+privet_midjourney_page:
+    path: /ailabs/midjourney
+    defaults: { _controller: privet.ailabs.controller_midjourney:execute }
+
+privet_midjourney_callback:
+    path: /ailabs/midjourney/callback/{job_id}/{ref}/{action}
+    methods: [POST]
+    defaults: 
+        _controller: privet.ailabs.controller_midjourney:callback 
+        mode: 'post'
+    requirements:
+        job_id: \d+
+        ref: "[a-zA-Z0-9]+"
+        action: posted|reply
+
 privet_scriptexecute_page:
     path: /ailabs/scriptexecute
     defaults: { _controller: privet.ailabs.controller_scriptexecute:execute }    

@@ -203,6 +203,7 @@ class listener implements EventSubscriberInterface
                 'poster_id'         => $this->user->data['user_id'],
                 'poster_name'       => $this->user->data['username'],
                 'request'           => utf8_encode_ucr($request),
+                'ref'               => bin2hex(random_bytes(21))
             ];
             $sql = 'INSERT INTO ' . $this->jobs_table . ' ' . $this->db->sql_build_array('INSERT', $data);
             $result = $this->db->sql_query($sql);
@@ -303,6 +304,8 @@ class listener implements EventSubscriberInterface
                 return $this->language->lang('AILABS_REPLIED');
             case 'fail':
                 return $this->language->lang('AILABS_UNABLE_TO_REPLY');
+            case 'query':
+                return $this->language->lang('AILABS_QUERY');
         }
 
         return $status;

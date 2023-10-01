@@ -1,4 +1,4 @@
-# AI Labs v 1.0.4 RC
+# AI Labs v 1.0.5
 ##### [Changelog](#changelog_link)  
 
 Incorporate AI into your phpBB board and get ready for an exciting experience.  

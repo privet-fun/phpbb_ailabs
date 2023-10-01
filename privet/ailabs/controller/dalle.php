@@ -159,7 +159,7 @@ class dalle extends GenericController
                     array_push($images, $item->url);
                 } else {
                     $filename = $this->save_base64_to_temp_file($item->b64_json, $ind);
-                    $item->b64_json = '<reducted>';
+                    $item->b64_json = '<redacted>';
                     array_push($images, $filename);
                 }
                 $ind++;

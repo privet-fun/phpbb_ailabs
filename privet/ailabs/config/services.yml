@@ -85,6 +85,23 @@ services:
             - '%privet.ailabs.tables.users%'
             - '%privet.ailabs.tables.jobs%' 
 
+    privet.ailabs.controller_midjourney:
+        class: privet\ailabs\controller\midjourney
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@service_container'
+            - '%core.php_ext%'
+            - '%core.root_path%'
+            - '%privet.ailabs.tables.users%'
+            - '%privet.ailabs.tables.jobs%' 
+            
     privet.ailabs.controller_scriptexecute:
         class: privet\ailabs\controller\scriptexecute
         arguments:

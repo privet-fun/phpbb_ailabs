@@ -38,6 +38,7 @@ class acp_controller //implements acp_interface
 		'/ailabs/chatgpt',
 		'/ailabs/dalle',
 		'/ailabs/stablediffusion',
+		'/ailabs/midjourney',		
 		'/ailabs/scriptexecute'
 	];
 

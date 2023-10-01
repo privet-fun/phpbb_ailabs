@@ -18,7 +18,8 @@ use privet\ailabs\includes\resultParse;
 
 /*
 
-config
+config (example)
+
 {
 "api_key": "<api-key>",
 "url_chat": "https://api.openai.com/v1/chat/completions",
@@ -31,10 +32,13 @@ config
 "presence_penalty": 0.6,
 "prefix": "This is optional field you can remove it or populate with something like this -> Pretend your are Bender from Futurma",
 "prefix_tokens": 16
+"max_quote_length": 10
 }
 
 template
+
 {info}[quote={poster_name} post_id={post_id} user_id={poster_id}]{request}[/quote]{response}
+
 */
 
 class chatgpt extends AIController
@@ -92,7 +96,7 @@ class chatgpt extends AIController
         $post_first_discarded = null;
         $mode = $this->job['post_mode'];
 
-        $history = ['post_text' => $this->job['post_text']];
+        $history = ['post_text' =>  $this->job['post_text']];
 
         $pattern = '/<QUOTE\sauthor="' . $this->job['ailabs_username'] . '"\spost_id="(.*)"\stime="(.*)"\suser_id="' . $this->job['ailabs_user_id'] . '">/';
 
@@ -116,7 +120,7 @@ class chatgpt extends AIController
             if ($matches != null && !empty($matches) && !empty($matches[1][0])) {
                 $postid = (int) $matches[1][0];
 
-                $sql = 'SELECT j.job_id, j.post_id, j.response_post_id, j.request, j.response, p.post_text, j.request_tokens, j.response_tokens ' .
+                $sql = 'SELECT j.job_id, j.post_id, j.response_post_id, j.request, j.response, p.post_text, p.post_time, j.request_tokens, j.response_tokens ' .
                     'FROM ' . $this->jobs_table . ' j ' .
                     'JOIN ' . POSTS_TABLE . ' p ON p.post_id = j.post_id ' .
                     'WHERE ' . $this->db->sql_build_array('SELECT', ['response_post_id' => $postid]);
@@ -145,11 +149,34 @@ class chatgpt extends AIController
                     $post_first_taken = $postid;
                     $history_tokens += $count_tokens;
 
+                    $history_decoded_request = utf8_decode_ncr($history['request']);
+                    $history_decoded_response = utf8_decode_ncr($history['response']);
+
                     array_unshift(
                         $messages,
-                        ['role' => 'user', 'content' => trim($history['request'])],
-                        ['role' => 'assistant', 'content' => trim($history['response'])]
+                        ['role' => 'user', 'content' => trim($history_decoded_request)],
+                        ['role' => 'assistant', 'content' => trim($history_decoded_response)]
                     );
+
+                    if ($round == 0) {
+                        // Remove quoted content from the quoted post
+                        $post_text = sprintf(
+                            '<r><QUOTE author="%1$s" post_id="%2$s" time="%3$s" user_id="%4$s"><s>[quote=%1$s post_id=%2$s time=%3$s user_id=%4$s]</s>%6$s<e>[/quote]</e></QUOTE>%5$s</r>',
+                            $this->job['ailabs_username'],
+                            (string) $postid,
+                            (string) $this->job['post_time'],
+                            (string) $this->job['ailabs_user_id'],
+                            $this->job['request'],
+                            property_exists($this->cfg, 'max_quote_length') ?
+                                $this->trim_words($history_decoded_response, (int) $this->cfg->max_quote_length) : $history_decoded_response,
+                        );
+
+                        $sql = 'UPDATE ' . POSTS_TABLE .
+                            ' SET ' . $this->db->sql_build_array('UPDATE', ['post_text' => utf8_encode_ucr($post_text)]) .
+                            ' WHERE post_id = ' . (int) $this->job['post_id'];
+                        $result = $this->db->sql_query($sql);
+                        $this->db->sql_freeresult($result);
+                    }
                 }
             }
         } while (!empty($history));
@@ -269,7 +296,7 @@ class chatgpt extends AIController
             'status'                        => $this->job['status'],
             'attempts'                      => $this->job['attempts'] + 1,
             'response_time'                 => $this->job['response_time'],
-            'response'                      => $api_response,
+            'response'                      => utf8_encode_ucr($api_response),
             'request_tokens'                => $request_tokens - $history_tokens - $prefix_tokens,
             'response_post_id'              => $this->job['response_post_id'],
             'response_tokens'               => $response_tokens,

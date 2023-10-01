@@ -18,12 +18,16 @@ if (empty($lang) || !is_array($lang)) {
 }
 
 $lang = array_merge($lang, [
-	'AILABS_ERROR_CHECK_LOGS'	=> '[color=#FF0000]Ошибка. Лог содержит детальную информацию.[/color]',
-	'AILABS_POSTS_DISCARDED'  	=> ', сообщения начиная с [url=%1$s?p=%2$d#p%2$d]этого[/url] не включены',
-	'AILABS_DISCARDED_INFO' 	=> '[size=75][url=%1$s?p=%2$d#p%2$d]Начало[/url] беседы из %3$d сообщений%4$s (%5$d токенов из %6$d использовано)[/size]',
-	'AILABS_THINKING' 			=> 'думает',
-	'AILABS_REPLYING' 			=> 'отвечает…',
-	'AILABS_REPLIED' 			=> 'ответил ↓',
-	'AILABS_UNABLE_TO_REPLY' 	=> 'ответить не смог',
-	'L_AILABS_AI'				=> 'AI'
+	'AILABS_MJ_BUTTONS'				=> 'Ответьте, процитировав одну из поддерживаемых команд [size=70][url=https://docs.midjourney.com/docs/quick-start#8-upscale-or-create-variations]1[/url] [url=https://docs.midjourney.com/docs/quick-start#9-enhance-or-modify-your-image]2[/url][/size]: ',
+	'AILABS_MJ_BUTTON_ALREADY_USED'	=> 'Команда %1s уже была [url=%2$s?p=%3$d#p%3$d]выполнена[/url]',
+	'AILABS_ERROR_CHECK_LOGS'		=> '[color=#FF0000]Ошибка. Лог содержит детальную информацию.[/color]',
+	'AILABS_MJ_MODERATED'			=> '[color=#FF0000]Запрос составлен неверно или подвергся модерации Midjourney.[/color]',
+	'AILABS_POSTS_DISCARDED'  		=> ', сообщения начиная с [url=%1$s?p=%2$d#p%2$d]этого[/url] не включены',
+	'AILABS_DISCARDED_INFO' 		=> '[size=75][url=%1$s?p=%2$d#p%2$d]Начало[/url] беседы из %3$d сообщений%4$s (%5$d токенов из %6$d использовано)[/size]',
+	'AILABS_THINKING' 				=> 'думает',
+	'AILABS_REPLYING' 				=> 'отвечает…',
+	'AILABS_REPLIED' 				=> 'ответил ↓',
+	'AILABS_UNABLE_TO_REPLY' 		=> 'ответить не смог',
+	'AILABS_QUERY' 					=> 'в очереди',
+	'L_AILABS_AI'					=> 'AI'
 ]);

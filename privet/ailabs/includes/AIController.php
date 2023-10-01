@@ -91,20 +91,7 @@ class AIController
             return new JsonResponse('job_id not provided');
         }
 
-        $where = [
-            'job_id' => $this->job_id
-        ];
-
-        $sql = 'SELECT j.job_id, j.ailabs_user_id, j.status, j.attempts, j.post_mode, j.post_id, j.forum_id, j.poster_id, j.poster_name, j.request, c.config, c.template, u.username as ailabs_username, p.topic_id, p.post_subject, p.post_text, f.forum_name ' .
-            'FROM ' . $this->jobs_table . ' j ' .
-            'JOIN ' . $this->users_table . ' c ON c.user_id = j.ailabs_user_id ' .
-            'JOIN ' . USERS_TABLE . ' u ON u.user_id = j.ailabs_user_id ' .
-            'JOIN ' . POSTS_TABLE . ' p ON p.post_id = j.post_id ' .
-            'JOIN ' . FORUMS_TABLE . ' f ON f.forum_id = j.forum_id ' .
-            'WHERE ' . $this->db->sql_build_array('SELECT', $where);
-        $result = $this->db->sql_query($sql);
-        $this->job = $this->db->sql_fetchrow($result);
-        $this->db->sql_freeresult($result);
+        $this->load_job();
 
         if (empty($this->job)) {
             return new JsonResponse('job_id not found in the database');
@@ -115,8 +102,6 @@ class AIController
         }
 
         $this->log = array('start' => $this->start);
-
-        $this->job['request'] = utf8_decode_ncr($this->job['request']);
 
         try {
             $this->cfg = json_decode($this->job['config']);
@@ -141,6 +126,27 @@ class AIController
         }
 
         return $this->process();
+    }
+
+    protected function load_job()
+    {
+        $where = [
+            'job_id' => $this->job_id
+        ];
+
+        $sql = 'SELECT j.job_id, j.ailabs_user_id, j.status, j.attempts, j.post_mode, j.post_id, j.forum_id, j.poster_id, j.poster_name, j.request, j.response, j.log, j.ref, j.response_message_id, c.config, c.template, u.username as ailabs_username, p.topic_id, p.post_subject, p.post_text, p.post_time, f.forum_name ' .
+            'FROM ' . $this->jobs_table . ' j ' .
+            'JOIN ' . $this->users_table . ' c ON c.user_id = j.ailabs_user_id ' .
+            'JOIN ' . USERS_TABLE . ' u ON u.user_id = j.ailabs_user_id ' .
+            'JOIN ' . POSTS_TABLE . ' p ON p.post_id = j.post_id ' .
+            'JOIN ' . FORUMS_TABLE . ' f ON f.forum_id = j.forum_id ' .
+            'WHERE ' . $this->db->sql_build_array('SELECT', $where);
+        $result = $this->db->sql_query($sql);
+        $this->job = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+
+        if (!empty($this->job) && !empty($this->job['request']))
+            $this->job['request'] = utf8_decode_ncr($this->job['request']);
     }
 
     protected function process()
@@ -452,5 +458,18 @@ class AIController
         fclose($handle);
 
         return $filename;
+    }
+
+    protected function trim_words($inputString, $numWords)
+    {
+        $words = explode(' ', $inputString);
+
+        if (count($words) <= $numWords) {
+            return $inputString;
+        }
+
+        $trimmedWords = array_slice($words, 0, $numWords);
+
+        return implode(' ', $trimmedWords) . '...'; //'…';
     }
 }

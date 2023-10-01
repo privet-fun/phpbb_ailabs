@@ -128,11 +128,11 @@ class stablediffusion extends GenericController
                 if ($item->finishReason !== 'SUCCESS') {
                     $message = $item->finishReason;
                     if (!empty($item->base64))
-                        $item->base64 = '<reducted>';
+                        $item->base64 = '<redacted>';
                 } else {
                     $filename = $this->save_base64_to_temp_file($item->base64, $ind);
                     array_push($images, $filename);
-                    $item->base64 = '<reducted>';
+                    $item->base64 = '<redacted>';
                 }
                 $ind++;
             }
