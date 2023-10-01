@@ -122,7 +122,7 @@ Finally go to `ACP` > `Extensions` > `AI Labs` > `Settings` and add desired AI c
 You can setup ChatGPT to pretend it is somebody else.  
 Let's create new board user `Bender` and configure as shown below:  
 ![Attachment settings](../privet/ailabs/docs/chatgpt_bender_example.png)  
-Notice we used `prefix` and `prefix_tokens` to fine-tune ChatGPT AI behaviour.    
+Notice we used `prefix` and `prefix_tokens` to fine-tune ChatGPT AI behavior.    
 Our AI bot `Bender` will provide responses like [this](https://privet.fun/viewtopic.php?t=2799), mostly staying in a character.  
   
 ## DALL-E setup 
@@ -158,9 +158,9 @@ AI Labs extension maintains internal logs, you should have admin or moderator ri
 
 You can see entire AI communication history in the log:  
 ![Attachment settings](../privet/ailabs/docs/debugging_log.png)  
-If Log entry is empty it ususally means that `/ailabs/*` or `/app.php/ailabs/*` routes blocked by one of phpBB extensions (eg <a href="https://www.phpbb.com/customise/db/extension/login_required">Login Required</a>) and you will need to add `/ailabs/*` or `/app.php/ailabs/*` to extension whitelist.  
+If Log entry is empty it usually means that `/ailabs/*` or `/app.php/ailabs/*` routes blocked by one of phpBB extensions (eg <a href="https://www.phpbb.com/customise/db/extension/login_required">Login Required</a>) and you will need to add `/ailabs/*` or `/app.php/ailabs/*` to extension whitelist.  
 You can examine Log `response` (JSON) to see details for AI response.  
-Please feel free to post your quesions or concerns at https://github.com/privet-fun/phpbb_ailabs/issues.
+Please feel free to post your questions or concerns at https://github.com/privet-fun/phpbb_ailabs/issues.
 ## Support and suggestions
 
 This extension is currently being actively developed. For communication, please use https://github.com/privet-fun/phpbb_ailabs/issues.
@@ -168,14 +168,14 @@ This extension is currently being actively developed. For communication, please 
 ## Changelog 
 
 * 1.0.5 October 1, 2023
-  - Midjourney suppert added
+  - Midjourney support added
   - `max_quote_length` option added for ChatGPT 
 
 * 1.0.4 June 4, 2023
   - Troubleshooting section added
-  - Added cofiguration for reply in topics
+  - Added configuration for reply in topics
   - Fixed links generation for cases where cookies disabled
-  - AI Labs internal controlles (`/ailabs/*`) will attempt to establish session to deal with phpBB extensions like <a href="https://www.phpbb.com/customise/db/extension/login_required">Login Required</a> 
+  - AI Labs internal controllers (`/ailabs/*`) will attempt to establish session to deal with phpBB extensions like <a href="https://www.phpbb.com/customise/db/extension/login_required">Login Required</a> 
   - Better descriptions added to help with setup
   - Minor bugfixes
 
