@@ -43,9 +43,20 @@
 
 	<script type="text/javascript">
 		const defaultConfigs = {
+			"midjourney": {
+				"url_imagine": "https://api.useapi.net/v1/jobs/imagine",
+    			"url_button": "https://api.useapi.net/v1/jobs/button",
+				"api_key": "your-useapi.net-key-goes-here",
+    			"discord": "your-discord-token",
+    			"server": "your-discord-server-id",
+    			"channel": "your-discord-channel-id",
+    			"maxJobs": 3,
+				"retryCount": 80,
+    			"timeoutBeforeRetrySec": 15
+			},			
 			"chatgpt": {
-				"api_key": "your-openai-api-key-goes-here",
 				"url_chat": "https://api.openai.com/v1/chat/completions",
+				"api_key": "your-openai-api-key-goes-here",
 				"model": "gpt-3.5-turbo",
 				"temperature": 0.9,
 				"max_tokens": 4096,
@@ -54,19 +65,20 @@
 				"frequency_penalty": 0,
 				"presence_penalty": 0.6,
 				"prefix": "",
-				"prefix_tokens": 0
+				"prefix_tokens": 0,
+				"max_quote_length": 10
 			},
 			"dalle": {
-				"api_key": "your-openai-api-key-goes-here",
 				"url_generations": "https://api.openai.com/v1/images/generations",
 				"url_variations": "https://api.openai.com/v1/images/variations",
+				"api_key": "your-openai-api-key-goes-here",
 				"n": 3,
 				"size": "512x512",
 				"response_format": "b64_json"
 			},
 			"stablediffusion": {
-				"api_key": "your-stablityai-api-key-goes-here",
 				"url_texttoimage": "https://api.stability.ai/v1/generation/stable-diffusion-xl-beta-v2-2-2/text-to-image",
+				"api_key": "your-stablityai-api-key-goes-here",
 				"cfg_scale": 7.5,
 				"clip_guidance_preset": "FAST_BLUE",
 				"height": 512,
@@ -83,6 +95,7 @@
 		}
 
 		const defaultTemplate = {
+			"midjourney": "[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\n\{response\}\n\{images\}\n\{info\}",
 			"chatgpt": "\{info\}[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\{response\}",
 			"dalle": "[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\{response\}\{attachments\}",
 			"stablediffusion": "[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\{response\}\{attachments\}",
