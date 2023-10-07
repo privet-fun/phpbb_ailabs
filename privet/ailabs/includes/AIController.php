@@ -422,16 +422,6 @@ class AIController
             'topic_id'              => $topicId,
         );
 
-        // Same exact code as in https://github.com/phpbb/phpbb/blob/master/phpBB/includes/message_parser.php
-        // See core.modify_attachment_sql_ary_on_submit https://area51.phpbb.com/docs/dev/3.3.x/extensions/events_list.html 
-        // Used solution proposed in https://www.phpbb.com/community/viewtopic.php?t=2556226
-        // Commented out after reading https://www.phpbb.com/community/viewtopic.php?t=2287631
-        // if ($dispatchEvent) {
-        //     $dispatcher = $this->phpbb_container->get('dispatcher');
-        //     $vars = array('sql_ary');
-        //     extract($dispatcher->trigger_event('core.modify_attachment_sql_ary_on_submit', compact($vars)));
-        // }
-
         $this->db->sql_query('INSERT INTO ' . ATTACHMENTS_TABLE . ' ' . $this->db->sql_build_array('INSERT', $sql_ary));
         $newAttachmentID = intval($this->db->sql_nextid());
 
