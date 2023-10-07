@@ -234,7 +234,7 @@ class midjourney extends GenericController
 
         $url_callback = generate_board_url(true) .
             $this->helper->route(
-                'privet_midjourney_callback',
+                'privet_ailabs_midjourney_callback',
                 [
                     'job_id'    => $this->job_id,
                     'ref'       => $this->job['ref'],
@@ -328,7 +328,7 @@ class midjourney extends GenericController
 
         $url_callback = generate_board_url(true) .
             $this->helper->route(
-                'privet_midjourney_callback',
+                'privet_ailabs_midjourney_callback',
                 [
                     'job_id'    => $this->job_id,
                     'ref'       => $this->job['ref'],

@@ -80,7 +80,7 @@ class AIController
         $streamedResponse = new StreamedResponse();
         $streamedResponse->headers->set('X-Accel-Buffering', 'no');
         $streamedResponse->setCallback(function () {
-            var_dump('Processing');
+            echo 'Processing';
             flush();
         });
         $streamedResponse->send();
@@ -424,8 +424,9 @@ class AIController
 
         if ($dispatchEvent) {
             $dispatcher = $this->phpbb_container->get('dispatcher');
-            $vars = array('sql_ary');
-            extract($dispatcher->trigger_event('core.modify_attachment_sql_ary_on_submit', compact($vars)));
+            // Same exact code as in https://github.com/phpbb/phpbb/blob/master/phpBB/viewonline.php
+            $vars_array = array('sql_ary');
+            extract($dispatcher->trigger_event('core.modify_attachment_sql_ary_on_submit', compact($vars_array)));
         }
 
         $this->db->sql_query('INSERT INTO ' . ATTACHMENTS_TABLE . ' ' . $this->db->sql_build_array('INSERT', $sql_ary));

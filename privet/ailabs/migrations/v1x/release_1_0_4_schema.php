@@ -48,4 +48,14 @@ class release_1_0_4_schema extends \phpbb\db\migration\migration
 		];
 	}
 
+	public function revert_schema()
+	{
+		return [
+			'drop_columns'	=> [
+				$this->table_prefix . 'ailabs_jobs'	=> [
+					'forums_reply',
+				]
+			]
+		];
+	}
 }

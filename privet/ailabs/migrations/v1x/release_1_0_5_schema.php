@@ -33,7 +33,7 @@ class release_1_0_5_schema extends \phpbb\db\migration\migration
 	public function revert_data()
 	{
 		return array(
-			array('config.remove', array('privet_ailabs_version')),
+			array('config.update', array('privet_ailabs_version', '1.0.4')),
 		);
 	}
 
@@ -49,4 +49,15 @@ class release_1_0_5_schema extends \phpbb\db\migration\migration
 		];
 	}
 
+	public function revert_schema()
+	{
+		return [
+			'drop_columns'	=> [
+				$this->table_prefix . 'ailabs_jobs'	=> [
+					'ref',
+					'response_message_id'
+				]
+			]
+		];
+	}
 }

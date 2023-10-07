@@ -1,20 +1,20 @@
-privet_chatgpt_page:
+privet_ailabs_chatgpt_page:
     path: /ailabs/chatgpt
     defaults: { _controller: privet.ailabs.controller_chatgpt:execute }
 
-privet_dalle_page:
+privet_ailabs_dalle_page:
     path: /ailabs/dalle
     defaults: { _controller: privet.ailabs.controller_dalle:execute }
 
-privet_stablediffusion_page:
+privet_ailabs_stablediffusion_page:
     path: /ailabs/stablediffusion
     defaults: { _controller: privet.ailabs.controller_stablediffusion:execute }
 
-privet_midjourney_page:
+privet_ailabs_midjourney_page:
     path: /ailabs/midjourney
     defaults: { _controller: privet.ailabs.controller_midjourney:execute }
 
-privet_midjourney_callback:
+privet_ailabs_midjourney_callback:
     path: /ailabs/midjourney/callback/{job_id}/{ref}/{action}
     methods: [POST]
     defaults: 
@@ -25,7 +25,7 @@ privet_midjourney_callback:
         ref: "[a-zA-Z0-9]+"
         action: posted|reply
 
-privet_scriptexecute_page:
+privet_ailabs_scriptexecute_page:
     path: /ailabs/scriptexecute
     defaults: { _controller: privet.ailabs.controller_scriptexecute:execute }    
 

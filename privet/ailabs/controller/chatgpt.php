@@ -168,7 +168,7 @@ class chatgpt extends AIController
                             (string) $this->job['ailabs_user_id'],
                             $this->job['request'],
                             property_exists($this->cfg, 'max_quote_length') ?
-                                $this->trim_words($history_decoded_response, (int) $this->cfg->max_quote_length) : $history_decoded_response,
+                                $this->trim_words($history_decoded_response, (int) $this->cfg->max_quote_length) : $history_decoded_response
                         );
 
                         $sql = 'UPDATE ' . POSTS_TABLE .
