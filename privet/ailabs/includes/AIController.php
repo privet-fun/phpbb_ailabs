@@ -424,7 +424,8 @@ class AIController
 
         if ($dispatchEvent) {
             $dispatcher = $this->phpbb_container->get('dispatcher');
-            // Same exact code as in https://github.com/phpbb/phpbb/blob/master/phpBB/viewonline.php
+            // Same exact code as in https://github.com/phpbb/phpbb/blob/master/phpBB/includes/message_parser.php
+            // See core.modify_attachment_sql_ary_on_submit https://area51.phpbb.com/docs/dev/3.3.x/extensions/events_list.html 
             $vars_array = array('sql_ary');
             extract($dispatcher->trigger_event('core.modify_attachment_sql_ary_on_submit', compact($vars_array)));
         }
