@@ -64,9 +64,7 @@ class scriptexecute extends GenericController
                 // Make sure that exe is enabled in /etc/php/8.2/fpm/pool.d/phpbb_pool.conf file 
                 // See line php_admin_value[disable_functions] = 
                 unset($output);
-                // Uncomment this line if you are planning to use this controller.
-                // If was commented out to pass phpBB extension certification process.
-                // exec($execute, $output, $result_code);
+                // Code removed, see 1.0.5
             } catch (\Exception $e) {
                 $result->response = '{ "error" : "' . $e . '" }';
             }

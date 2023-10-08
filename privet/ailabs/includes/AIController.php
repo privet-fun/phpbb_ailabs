@@ -80,7 +80,8 @@ class AIController
         $streamedResponse = new StreamedResponse();
         $streamedResponse->headers->set('X-Accel-Buffering', 'no');
         $streamedResponse->setCallback(function () {
-            echo 'Processing';
+            // Uncomment to debug callback response
+            // echo 'Processing';
             flush();
         });
         $streamedResponse->send();
