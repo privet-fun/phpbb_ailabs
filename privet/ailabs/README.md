@@ -1,4 +1,4 @@
-# AI Labs v 1.0.6
+# AI Labs v 1.0.7
 
 Incorporate AI into your phpBB board and get ready for an exciting experience.  
 Currently supported Midjourney, ChatGPT, DALL-E (OpenAI) and Stable Diffusion (Stability AI).  
@@ -167,6 +167,16 @@ This extension is currently being actively developed. For communication, please 
 
 ## Changelog 
 
+* 1.0.7 December 26, 2023
+  - Updated the Midjourney Bot to support the v2 API from https://useapi.net  
+    Make sure to update your Midjourney bot [configuration](https://github.com/privet-fun/phpbb_ailabs/blob/main/privet/ailabs/docs/midjourney_setup.png):
+    ```   
+      "url_imagine": "https://api.useapi.net/v2/jobs/imagine",
+      "url_button": "https://api.useapi.net/v2/jobs/button",
+    ```
+  - All messages and warnings from the Midjourney Bot will now be relayed back
+  - [Custom Zoom](https://docs.midjourney.com/docs/zoom-out) support added
+  - Added support for Midjourney v6, including quoted text and new buttons 
 
 * 1.0.6 October 7, 2023
   - Minor internal changes to address phpBB extension certification

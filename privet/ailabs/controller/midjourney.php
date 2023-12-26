@@ -27,8 +27,8 @@ config:
 
 {
     "api_key":                  "<useapi.net api token>",
-    "url_imagine":              "https://api.useapi.net/v1/jobs/imagine",
-    "url_button":               "https://api.useapi.net/v1/jobs/button",
+    "url_imagine":              "https://api.useapi.net/v2/jobs/imagine",
+    "url_button":               "https://api.useapi.net/v2/jobs/button",
     "discord":                  "<Discord token, required>",
     "server":                   "<Discord server id, required>",
     "channel":                  "<Discord channel id, required>",
@@ -92,7 +92,7 @@ class midjourney extends GenericController
 
                 $response_message_id = $this->process_response_message_id($json);
 
-                // https://useapi.net/docs/api-v1/jobs-button
+                // https://useapi.net/docs/api-v2/post-jobs-button
                 // HTTP 409 Conflict
                 // Button <U1 | U2 | U3 | U4> already executed by job <jobid>
                 if (!empty($response_message_id) && !empty($response_codes) && in_array(409, $response_codes)) {
@@ -127,7 +127,7 @@ class midjourney extends GenericController
 
         // Assume the worst
         $this->job['status'] = 'failed';
-        $this->job['response'] = $this->language->lang('AILABS_ERROR_CHECK_LOGS');
+        $this->job['response'] = !empty($json) && !empty($json['error']) ? '[color=#FF0000]' . $json['error'] . '[/color]' : $this->language->lang('AILABS_ERROR_CHECK_LOGS');
 
         if (!empty($json)) {
             if (!empty($json['status']))
@@ -149,7 +149,9 @@ class midjourney extends GenericController
                         $this->job['response'] = preg_replace('/<@(\d+)>/', '', $json['content']);
                         break;
                     case 422: // HTTP 422 Unprocessable Content - Moderated                    
-                        $this->job['response'] = $this->language->lang('AILABS_MJ_MODERATED');
+                        $this->job['response'] = 
+'[color=#FF0000]' . $json['error'] . '
+' . $json['errorDetails'] . '[/color]';
                         break;
                 }
         }
@@ -247,27 +249,39 @@ class midjourney extends GenericController
 
         if (!empty($parent_job)) {
             $log = json_decode($parent_job['log'], true);
+            $prompt = null;
+            $button = $request;
 
-            // https://useapi.net/docs/api-v1/jobs-button
+            $custom_zoom = 'Custom Zoom';
+            $custom_zoom_len = strlen($custom_zoom);
+            if (substr($request, 0, $custom_zoom_len) === $custom_zoom) {
+                $button = $custom_zoom;
+                $prompt = trim(substr($request, $custom_zoom_len));
+            }
+
+            // https://useapi.net/docs/api-v2/post-jobs-button
             if (
                 !empty($log) &&
                 !empty($log['response.json']) &&
                 !empty($log['response.json']['jobid']) &&
                 !empty($log['response.json']['buttons']) &&
-                in_array($request, $log['response.json']['buttons'], true)
+                in_array($button, $log['response.json']['buttons'], true)
             ) {
                 $payload = [
                     'jobid'     => $log['response.json']['jobid'],
-                    'button'    => $request,
+                    'button'    => $button,
                     'discord'   => $this->cfg->discord,
                     'maxJobs'   => $maxJobs,
                     'replyUrl'  => $url_callback,
                     'replyRef'  => $this->job_id,
                 ];
+
+                if (!empty($prompt))
+                    $payload += ['prompt' => $prompt];
             }
         }
 
-        // https://useapi.net/docs/api-v1/jobs-imagine
+        // https://useapi.net/docs/api-v2/post-jobs-imagine
         if (empty($payload)) {
             $payload = [
                 'prompt'                => $request,
@@ -299,8 +313,8 @@ class midjourney extends GenericController
 
         $count  = 0;
         $response = null;
-        // https://useapi.net/docs/api-v1/jobs-imagine
-        // https://useapi.net/docs/api-v1/jobs-button
+        // https://useapi.net/docs/api-v2/post-jobs-imagine
+        // https://useapi.net/docs/api-v2/post-jobs-button
         $url = empty($opts['jobid']) ? $this->cfg->url_imagine : $this->cfg->url_button;
 
         // Attempt to submit request for (retryCount * timeoutBeforeRetrySec) seconds.
@@ -310,8 +324,7 @@ class midjourney extends GenericController
             $response = $api->sendRequest($url, 'POST', $opts);
         } while (
             // 429: Maximum of xx jobs executing in parallel supported
-            // 504: Unable to lock Discord after xx attempts
-            (in_array(429, $api->responseCodes) || in_array(504, $api->responseCodes)) &&
+            in_array(429, $api->responseCodes) &&
             $count < $retryCount &&
             sleep($timeoutBeforeRetrySec) !== false
         );

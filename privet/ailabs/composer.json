@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "AI Labs",
     "homepage": "https://privet.fun",
-    "version": "1.0.6",
-    "time": "2023-10-07",
+    "version": "1.0.7",
+    "time": "2023-12-26",
     "keywords": [
         "phpbb",
         "extension",
@@ -16,6 +16,8 @@
         "openai",
         "stable diffusion",
         "midjourney",
+        "midjourney api",
+        "useapi.net",
         "ai"
     ],
     "license": "GPL-2.0-only",
