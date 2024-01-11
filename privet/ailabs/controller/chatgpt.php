@@ -241,7 +241,7 @@ class chatgpt extends AIController
             if (
                 empty($json->object) ||
                 empty($json->choices) ||
-                $json->object != 'chat.completion' ||
+                strpos($json->object, 'chat.completion') === false ||
                 !in_array(200, $api->responseCodes)
             ) {
             } else {
