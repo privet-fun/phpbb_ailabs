@@ -137,7 +137,7 @@ class chatgpt extends AIController
                         'postid'                => $postid,
                         'request_tokens'        => $history['request_tokens'],
                         'response_tokens'       => $history['response_tokens'],
-                        'runnig_total_tokens'   => $history_tokens + $count_tokens,
+                        'running_total_tokens'   => $history_tokens + $count_tokens,
                         'discard'               => $discard
                     ];
 

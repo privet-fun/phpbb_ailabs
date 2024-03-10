@@ -76,17 +76,17 @@ class AIController
     {
         $this->start = date('Y-m-d H:i:s');
 
+        $this->job_id = (int) utf8_clean_string($this->request->variable('job_id', '', true));
+
         // https://symfony.com/doc/current/components/http_foundation.html#streaming-a-response
         $streamedResponse = new StreamedResponse();
         $streamedResponse->headers->set('X-Accel-Buffering', 'no');
         $streamedResponse->setCallback(function () {
-            // Uncomment to debug callback response
-            // echo 'Processing';
+            // To debug callback response
+            echo 'Processing job ' . $this->job_id;
             flush();
         });
         $streamedResponse->send();
-
-        $this->job_id = utf8_clean_string($this->request->variable('job_id', '', true));
 
         if (empty($this->job_id)) {
             return new JsonResponse('job_id not provided');
@@ -181,6 +181,7 @@ class AIController
             '{request}'         => $job['request'],
             '{info}'            => $resultParse->info,
             '{response}'        => $resultParse->message,
+            '{settings}'        => $resultParse->settings,
             '{images}'          => $images,
             '{attachments}'     => $attachments,
             '{poster_id}'       => $job['poster_id'],
@@ -466,5 +467,50 @@ class AIController
         $trimmedWords = array_slice($words, 0, $numWords);
 
         return implode(' ', $trimmedWords) . '...'; //'…';
+    }
+
+    protected function load_first_attachment($postId)
+    {
+        $sql = 'SELECT physical_filename FROM ' . ATTACHMENTS_TABLE . ' WHERE post_msg_id = ' . $postId . ' AND is_orphan = 0 ORDER BY attach_id ASC';
+        $result = $this->db->sql_query($sql);
+        $attachments = $this->db->sql_fetchrowset($result);
+        $this->db->sql_freeresult($result);
+
+        foreach ($attachments as $attachment) {
+            $filename = $this->root_path . $this->config['upload_path'] . '/' . utf8_basename($attachment['physical_filename']);
+
+            if (file_exists($filename))
+                return file_get_contents($filename);
+        }
+
+        return false;
+    }
+
+    function extract_numeric_settings(&$text, $fields_array, &$settings = [], &$info = "", $info_divider = " ")
+    {
+        $info = "";
+        $new = [];
+
+        foreach ((array)$fields_array as $key => $value) {
+            preg_match("/(--|—)" . $key . "\s([0-9\.]+)/i", $text, $matches);
+
+            if (isset($matches[2])) {
+                $new[$value] = +$matches[2];
+                $text = preg_replace("/(--|—)" . $key . "\s([0-9\.]+)/i", '', $text);
+                $info .= "--" . $value . " " . $new[$value] . $info_divider;
+            }
+        }
+
+        $info = rtrim($info, $info_divider);
+
+        if (!empty($info)) {
+            foreach ((array)$fields_array as $key => $value) {
+                unset($settings[$value]);
+                if (isset($new[$value]))
+                    $settings[$value] = $new[$value];
+            }
+        }
+
+        return !empty($info);
     }
 }

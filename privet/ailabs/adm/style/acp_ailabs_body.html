@@ -45,15 +45,74 @@
 		const defaultConfigs = {
 			"midjourney": {
 				"url_imagine": "https://api.useapi.net/v2/jobs/imagine",
-    			"url_button": "https://api.useapi.net/v2/jobs/button",
+				"url_button": "https://api.useapi.net/v2/jobs/button",
 				"api_key": "your-useapi.net-key-goes-here",
-    			"discord": "your-discord-token",
-    			"server": "your-discord-server-id",
-    			"channel": "your-discord-channel-id",
-    			"maxJobs": 3,
+				"discord": "your-discord-token",
+				"server": "your-discord-server-id",
+				"channel": "your-discord-channel-id",
+				"maxJobs": 3,
 				"retryCount": 80,
-    			"timeoutBeforeRetrySec": 15
-			},			
+				"timeoutBeforeRetrySec": 15
+			},
+			"gemini": {
+				"url_generateContent": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro-latest:generateContent?key=<API_KEY>",
+				"url_countTokens": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro-latest:countTokens?key=<API_KEY>",
+				"max_tokens": 30720,
+				"message_tokens": 2048,
+				"max_quote_length": 10,
+				"prefix": "",
+				"safety_settings": [
+					{
+						"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+						"threshold": "BLOCK_NONE"
+					},
+					{
+						"category": "HARM_CATEGORY_HATE_SPEECH",
+						"threshold": "BLOCK_NONE"
+					},
+					{
+						"category": "HARM_CATEGORY_HARASSMENT",
+						"threshold": "BLOCK_NONE"
+					},
+					{
+						"category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+						"threshold": "BLOCK_NONE"
+					}
+				],
+				"generation_config": {
+					"temperature": 0.3,
+					"topK": 40,
+					"topP": 0.95,
+					"candidateCount": 1,
+					"maxOutputTokens": 30720
+				}
+			},
+			"gemini_vision": {
+				"url_generateContent": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=<API_KEY>",
+				"safety_settings": [
+					{
+						"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+						"threshold": "BLOCK_NONE"
+					},
+					{
+						"category": "HARM_CATEGORY_HATE_SPEECH",
+						"threshold": "BLOCK_NONE"
+					},
+					{
+						"category": "HARM_CATEGORY_HARASSMENT",
+						"threshold": "BLOCK_NONE"
+					},
+					{
+						"category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+						"threshold": "BLOCK_NONE"
+					}
+				],
+				"generation_config": {
+					"temperature": 0.3,
+					"topK": 40,
+					"topP": 0.95,
+				}
+			},
 			"chatgpt": {
 				"url_chat": "https://api.openai.com/v1/chat/completions",
 				"api_key": "your-openai-api-key-goes-here",
@@ -96,17 +155,34 @@
 
 		const defaultTemplate = {
 			"midjourney": "[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\n\{response\}\n\{images\}\n\{info\}",
+			"gemini": "\{info\}[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\{response\}\n\{settings\}",
+			"gemini_vision": "\{info\}[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\{response\}\n\{settings\}",
 			"chatgpt": "\{info\}[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\{response\}",
 			"dalle": "[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\{response\}\{attachments\}",
 			"stablediffusion": "[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\{response\}\{attachments\}",
 			"scriptexecute": "[quote=\{poster_name\} post_id=\{post_id\} user_id=\{poster_id\}]\{request\}[/quote]\{response\}\{attachments\}"
 		}
 
+		const urlAPIDocs = {
+			"midjourney": "https://useapi.net/docs/start-here/setup-midjourney",
+			"gemini": "https://ai.google.dev/tutorials/rest_quickstart",
+			"gemini_vision": "https://ai.google.dev/tutorials/rest_quickstart",
+			"chatgpt": "https://platform.openai.com/docs/api-reference/chat/create",
+			"dalle": "https://platform.openai.com/docs/api-reference/images/create",
+			"stablediffusion": "https://platform.stability.ai/docs/api-reference#tag/v1generation/operation/textToImage",
+			"scriptexecute": "https://github.com/privet-fun/phpbb_ailabs"
+		}
+
 		function doDefault(id, config, isJSON) {
 			const controller = $('#ailabs_controller option:selected').text().trim();
 			if (config[controller]) {
 				const selectElement = $('#' + id);
-				selectElement.val(isJSON ? JSON.stringify(config[controller], null, 2) : config[controller]);
+				if (selectElement.is('a')) {
+					selectElement.attr('href', config[controller]);
+					selectElement.text(config[controller]);
+				} else {
+					selectElement.val(isJSON ? JSON.stringify(config[controller], null, 2) : config[controller]);
+				}
 			}
 		}
 
@@ -159,9 +235,27 @@
 			popup(url, 760, 570, '_usersearch');
 			return false;
 		}
+
+		function openAPIDocURL() {
+			const controller = $('#ailabs_controller option:selected').text().trim();
+			if (controller)
+				window.open(urlAPIDocs[controller]);
+		}
+
 	</script>
 
 	<fieldset>
+		{% if ailabs_bot_url %}
+		<dl>
+			<dt>
+				<label for="ailabs_bot_url">{{ lang('LBL_AILABS_BOT_URL') ~ lang('COLON') }}</label>
+				<br><span>{{ lang('LBL_AILABS_BOT_URL_EXPLAIN') }}</span>
+			</dt>
+			<dd>
+				<a name="ailabs_bot_url" href="{{ ailabs_bot_url }}" target="_blank">{{ ailabs_bot_url }}</a>
+			</dd>
+		</dl>
+		{% endif %}
 		<dl>
 			<dt>
 				<label for="ailabs_enabled">{{ lang('LBL_AILABS_ENABLED') ~ lang('COLON') }}</label>
@@ -183,6 +277,8 @@
 		<dl>
 			<dt>
 				<label for="ailabs_controller">{{ lang('LBL_AILABS_CONTROLLER') ~ lang('COLON') }}</label>
+				<br><a id="ailabs_bot_url_help" target="_blank" href="https://link" onclick="event.preventDefault(); openAPIDocURL()">{{
+					lang('LBL_AILABS_API_DOCS') }}</a>
 			</dt>
 			<dd>
 				<select required id="ailabs_controller" name="ailabs_controller">

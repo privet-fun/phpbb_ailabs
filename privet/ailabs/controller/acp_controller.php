@@ -35,10 +35,12 @@ class acp_controller //implements acp_interface
 	protected $tpr_ailabs;
 
 	protected $desc_contollers = [
+		'/ailabs/gemini',
+		'/ailabs/gemini_vision',
 		'/ailabs/chatgpt',
 		'/ailabs/dalle',
 		'/ailabs/stablediffusion',
-		'/ailabs/midjourney',		
+		'/ailabs/midjourney',
 		'/ailabs/scriptexecute'
 	];
 
@@ -100,6 +102,7 @@ class acp_controller //implements acp_interface
 			'forums_reply'		=> $this->request->variable('ailabs_forums_reply', ''),
 			'forums_mention'	=> $this->request->variable('ailabs_forums_mention', ''),
 			'enabled'			=> $this->request->variable('ailabs_enabled', true),
+			'ailabs_bot_url'	=> (string) append_sid(generate_board_url() . 'chatgpt', ['job_id' => 0], true, $this->user->session_id)
 		];
 
 		if ($this->submit) {
@@ -167,7 +170,8 @@ class acp_controller //implements acp_interface
 					'ailabs_forums_post'	=> (string) $row['forums_post'],
 					'ailabs_forums_reply'	=> (string) $row['forums_reply'],
 					'ailabs_forums_mention'	=> (string) $row['forums_mention'],
-					'ailabs_enabled'		=> (bool) $row['enabled']
+					'ailabs_enabled'		=> (bool) $row['enabled'],
+					'ailabs_bot_url'		=> (string) append_sid(generate_board_url() . $row['controller'], ['job_id' => 0], true, $this->user->session_id)
 				];
 
 				$this->db->sql_freeresult($result);
@@ -315,7 +319,7 @@ class acp_controller //implements acp_interface
 
 	protected function build_forums_list()
 	{
-		$return = [];
+		$return = ['ALL' => 'ALL'];
 		$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE . ' ORDER BY left_id';
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result)) {

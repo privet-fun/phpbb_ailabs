@@ -1,3 +1,11 @@
+privet_ailabs_gemini_page:
+    path: /ailabs/gemini
+    defaults: { _controller: privet.ailabs.controller_gemini:execute }
+
+privet_ailabs_gemini_vision_page:
+    path: /ailabs/gemini_vision
+    defaults: { _controller: privet.ailabs.controller_gemini_vision:execute }
+
 privet_ailabs_chatgpt_page:
     path: /ailabs/chatgpt
     defaults: { _controller: privet.ailabs.controller_chatgpt:execute }

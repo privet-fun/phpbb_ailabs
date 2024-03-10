@@ -23,17 +23,17 @@ class GenericCurl
     public int $timeoutBeforeRetrySec;
     public $responseCodes = [];
 
-    public function __construct($API_KEY, $retryCount = 3, $timeoutBeforeRetrySec = 10)
+    public function __construct($API_KEY = null, $retryCount = 3, $timeoutBeforeRetrySec = 10)
     {
         $this->contentTypes = [
             "application/json"    => "Content-Type: application/json",
             "multipart/form-data" => "Content-Type: multipart/form-data",
         ];
 
-        $this->headers = [
-            $this->contentTypes["application/json"],
-            "Authorization: Bearer $API_KEY",
-        ];
+        $this->headers = [$this->contentTypes["application/json"]];
+
+        if (!empty($API_KEY))
+            $this->headers[] = "Authorization: Bearer $API_KEY";
 
         $this->retryCount = $retryCount;
         $this->timeoutBeforeRetrySec = $timeoutBeforeRetrySec;
@@ -99,6 +99,10 @@ class GenericCurl
             $this->headers[0] = $this->contentTypes["application/json"];
         }
 
+        // Debugging cURL
+        // Look for /var/www/phpbb/curl.txt
+        // $out = fopen("curl.txt", 'a+');
+
         $curl_info = [
             CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -110,6 +114,9 @@ class GenericCurl
             CURLOPT_CUSTOMREQUEST  => $method,
             CURLOPT_POSTFIELDS     => $post_fields,
             CURLOPT_HTTPHEADER     => $this->headers,
+            // Debugging cURL
+            // CURLOPT_VERBOSE        => true,
+            // CURLOPT_STDERR         => $out
         ];
 
         if ($opts == []) {
@@ -145,6 +152,10 @@ class GenericCurl
         $this->curlInfo = curl_getinfo($curl);
 
         curl_close($curl);
+
+        // Debugging cURL
+        // fwrite($out, $response)
+        // fclose($out);
 
         return $response;
     }

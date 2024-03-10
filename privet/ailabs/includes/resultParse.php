@@ -17,4 +17,5 @@ class resultParse
     public $images;
     public $info;
     public $json;
+    public $settings;
 }

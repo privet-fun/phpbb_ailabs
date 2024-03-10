@@ -34,6 +34,40 @@ services:
         tags:
             - { name: event.listener }
 
+    privet.ailabs.controller_gemini:
+        class: privet\ailabs\controller\gemini
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@service_container'
+            - '%core.php_ext%'
+            - '%core.root_path%'
+            - '%privet.ailabs.tables.users%'
+            - '%privet.ailabs.tables.jobs%'             
+
+    privet.ailabs.controller_gemini_vision:
+        class: privet\ailabs\controller\gemini_vision
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@service_container'
+            - '%core.php_ext%'
+            - '%core.root_path%'
+            - '%privet.ailabs.tables.users%'
+            - '%privet.ailabs.tables.jobs%'             
+
     privet.ailabs.controller_chatgpt:
         class: privet\ailabs\controller\chatgpt
         arguments:
