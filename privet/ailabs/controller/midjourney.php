@@ -274,7 +274,7 @@ class midjourney extends GenericController
                     'discord'   => $this->cfg->discord,
                     'maxJobs'   => $maxJobs,
                     'replyUrl'  => $url_callback,
-                    'replyRef'  => $this->job_id,
+                    'replyRef'  => (string) $this->job_id,
                 ];
 
                 if (!empty($prompt))
@@ -291,7 +291,7 @@ class midjourney extends GenericController
                 'channel'               => $this->cfg->channel,
                 'maxJobs'               => $maxJobs,
                 'replyUrl'              => $url_callback,
-                'replyRef'              => $this->job_id,
+                'replyRef'              => (string) $this->job_id,
             ];
         }
 
